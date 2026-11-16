@@ -5,6 +5,7 @@ export const ANCLA_ALTERNANCIA = '2026-08-29' // Culta = 29 ago, Zorro = 30 ago,
 
 export const MUNDOS = {
   hoy: { id: 'hoy', nombre: 'Hoy', emoji: '🏠', color: 'var(--lima)', frase: 'Tu panel, corazón' },
+  retos: { id: 'retos', nombre: 'Retos', emoji: '🎮', color: 'var(--mostaza)', frase: 'Aquí se juega de verdad' },
   mapa: { id: 'mapa', nombre: 'Mapa', emoji: '🗺️', color: 'var(--mostaza)', frase: '19 fases, camino con desvíos' },
   culta: { id: 'culta', nombre: 'Culta', emoji: '🎓', color: 'var(--lila)', frase: 'Culta y alturada' },
   zorro: { id: 'zorro', nombre: 'Zorro', emoji: '🦊', color: 'var(--mandarina)', frase: 'El humor como músculo' },
@@ -17,7 +18,7 @@ export const MUNDOS = {
   ajustes: { id: 'ajustes', nombre: 'Datos', emoji: '⚙️', color: 'var(--crema-2)', frase: 'Guardar, importar, módulos' },
 } as const
 export type MundoId = keyof typeof MUNDOS
-export const ORDEN: MundoId[] = ['hoy', 'mapa', 'culta', 'zorro', 'voz', 'calendario', 'bitacora', 'expediente', 'patrones', 'logros', 'ajustes']
+export const ORDEN: MundoId[] = ['hoy', 'retos', 'mapa', 'culta', 'zorro', 'voz', 'calendario', 'bitacora', 'expediente', 'patrones', 'logros', 'ajustes']
 
 export const NIVELES = [
   { min: 0, emoji: '🐛', nombre: 'Larva Cansada', frase: 'Todo inicio cuenta, aunque no lo sientas todavía.' },

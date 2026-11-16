@@ -35,51 +35,6 @@ function Burbuja({ src, pos, r, color }: { src: string; pos: [number, number, nu
   )
 }
 
-function Gira({ children, v = 0.3 }: any) {
-  const g = useRef<THREE.Group>(null)
-  useFrame((_, d) => { if (g.current) g.current.rotation.y += d * v })
-  return <group ref={g}>{children}</group>
-}
-
-const Manzanita = (p: any) => (
-  <Float speed={2} floatIntensity={1.4} rotationIntensity={0.8} {...p}>
-    <mesh scale={[1, 0.92, 1]}><sphereGeometry args={[0.42, 32, 32]} />{mat(C.lima)}</mesh>
-    <mesh position={[0, 0.44, 0]} rotation={[0, 0, 0.3]}><cylinderGeometry args={[0.03, 0.04, 0.22, 8]} />{mat(C.tinta)}</mesh>
-    <mesh position={[0.14, 0.5, 0]} rotation={[0, 0, -0.9]} scale={[1, 0.45, 0.25]}><sphereGeometry args={[0.16, 16, 16]} />{mat(C.menta)}</mesh>
-  </Float>
-)
-const Corona = (p: any) => (
-  <Float speed={1.6} floatIntensity={1.2} rotationIntensity={0.6} {...p}>
-    <Gira>
-      <mesh><cylinderGeometry args={[0.42, 0.36, 0.26, 28, 1, true]} />{mat(C.mostaza, { side: THREE.DoubleSide })}</mesh>
-      {[0, 1, 2, 3, 4].map((i) => { const a = (i / 5) * Math.PI * 2; return <mesh key={i} position={[Math.cos(a) * 0.4, 0.27, Math.sin(a) * 0.4]}><coneGeometry args={[0.1, 0.3, 12]} />{mat(C.mostaza)}</mesh> })}
-    </Gira>
-  </Float>
-)
-const Avioncito = (p: any) => (
-  <Float speed={2.4} floatIntensity={2} rotationIntensity={1} {...p}>
-    <mesh rotation={[0.3, 0.4, -1.2]} scale={[1, 1, 0.22]}><coneGeometry args={[0.36, 0.95, 3]} />{mat('#ffffff', { roughness: 0.6 })}</mesh>
-  </Float>
-)
-const Zorrito = (p: any) => (
-  <Float speed={1.8} floatIntensity={1.3} rotationIntensity={0.5} {...p}>
-    <mesh rotation={[Math.PI, Math.PI / 4, 0]} scale={[1, 1, 0.8]}><coneGeometry args={[0.5, 0.72, 4]} />{mat(C.mandarina, { flatShading: true })}</mesh>
-    <mesh position={[-0.27, 0.44, 0]} rotation={[0, 0, 0.28]}><coneGeometry args={[0.15, 0.36, 4]} />{mat(C.mandarina, { flatShading: true })}</mesh>
-    <mesh position={[0.27, 0.44, 0]} rotation={[0, 0, -0.28]}><coneGeometry args={[0.15, 0.36, 4]} />{mat(C.mandarina, { flatShading: true })}</mesh>
-    <mesh position={[0, -0.2, 0.2]}><sphereGeometry args={[0.15, 12, 12]} />{mat('#ffffff')}</mesh>
-    <mesh position={[0, -0.27, 0.34]}><sphereGeometry args={[0.055, 12, 12]} />{mat(C.tinta)}</mesh>
-    <mesh position={[-0.15, 0.08, 0.3]}><sphereGeometry args={[0.045, 12, 12]} />{mat(C.tinta)}</mesh>
-    <mesh position={[0.15, 0.08, 0.3]}><sphereGeometry args={[0.045, 12, 12]} />{mat(C.tinta)}</mesh>
-  </Float>
-)
-const Lupa = (p: any) => (
-  <Float speed={1.5} floatIntensity={1.2} rotationIntensity={0.9} {...p}>
-    <mesh><torusGeometry args={[0.3, 0.06, 16, 48]} />{mat(C.rosa)}</mesh>
-    <mesh><circleGeometry args={[0.28, 40]} /><meshPhysicalMaterial color="#fff" transparent opacity={0.3} clearcoat={1} roughness={0} side={THREE.DoubleSide} /></mesh>
-    <mesh position={[0.34, -0.34, 0]} rotation={[0, 0, Math.PI / 4]}><cylinderGeometry args={[0.05, 0.05, 0.42, 12]} />{mat(C.tinta)}</mesh>
-  </Float>
-)
-
 function Escena({ fotos, nombre }: { fotos: string[]; nombre: string }) {
   const grupo = useRef<THREE.Group>(null)
   const { viewport } = useThree()
@@ -106,16 +61,6 @@ function Escena({ fotos, nombre }: { fotos: string[]; nombre: string }) {
           </Text3D>
         </Center>
         {fotos.slice(0, 5).map((f, i) => <Burbuja key={i} src={f} pos={sitios[i]} r={radios[i] * (alto ? 0.82 : 1)} color={colores[i]} />)}
-        <Float speed={1} floatIntensity={0.8} position={alto ? [1.7, -1.2, -1.6] : [-5, -1.3, -1.5]}>
-          <Gira v={0.25}><mesh><icosahedronGeometry args={[0.95, 1]} /><meshBasicMaterial color={C.tinta} wireframe transparent opacity={0.55} /></mesh></Gira>
-        </Float>
-        <Float speed={1.3} floatIntensity={1} position={alto ? [-1.8, 1.1, 1.2] : [2, -1.9, 1.5]}><mesh><sphereGeometry args={[0.36, 32, 32]} /><meshPhysicalMaterial color={C.lila} roughness={0.1} clearcoat={1} /></mesh></Float>
-        <Float speed={1.1} floatIntensity={1.4} position={alto ? [1.9, 0.9, 1] : [-2.4, 2.2, -0.9]}><Gira v={0.6}><mesh rotation={[1, 0.4, 0]}><torusGeometry args={[0.36, 0.11, 20, 60]} />{mat(C.celeste)}</mesh></Gira></Float>
-        <Manzanita position={alto ? [-1.9, -0.9, 1.3] : [-4.9, 0.2, 1.4]} />
-        <Corona position={alto ? [0.2, -3.9, 0.6] : [5.3, 0.6, -0.4]} />
-        <Avioncito position={alto ? [1.9, 3.6, 0.8] : [1.9, 2.5, 1.2]} />
-        <Zorrito position={alto ? [-0.3, 1.9, 1.6] : [-2.9, -1.2, 1.6]} />
-        <Lupa position={alto ? [1.2, -1.9, 1.4] : [3.1, -0.2, 1.7]} />
       </group>
     </PresentationControls>
   )

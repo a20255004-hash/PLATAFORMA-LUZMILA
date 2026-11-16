@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { Component, lazy, ReactNode, Suspense, useEffect, useRef, useState } from 'react'
+import { Arcade } from './components/Juegos'
 import { Avisos, sinMovimiento } from './components/ui'
 import { MUNDOS, MundoId, ORDEN } from './data/estructura'
 import { useDatos } from './store'
@@ -7,6 +8,7 @@ import Hoy from './pages/Hoy'
 
 const PAGINAS: Record<MundoId, any> = {
   hoy: Hoy,
+  retos: lazy(() => import('./pages/Retos')),
   mapa: lazy(() => import('./pages/Mapa')),
   culta: lazy(() => import('./pages/Culta')),
   zorro: lazy(() => import('./pages/Zorro')),
@@ -53,13 +55,14 @@ export default function App() {
   }
 
   const visibles = ORDEN.filter((m) => (m === 'culta' || m === 'zorro' || m === 'voz' ? (mods as any)[m] !== false : true))
-  const rapidos = (['hoy', 'culta', 'zorro', 'voz', 'expediente'] as MundoId[]).filter((m) => visibles.includes(m))
+  const rapidos = (['hoy', 'retos', 'culta', 'zorro', 'voz'] as MundoId[]).filter((m) => visibles.includes(m))
   const Pag = PAGINAS[ruta]
 
   return (
     <Red>
       <a href="#contenido" className="sr">Saltar al contenido</a>
       <Avisos />
+      <Arcade />
       <nav className="dock" aria-label="Secciones">
         {rapidos.map((m) => (
           <button key={m} onClick={() => irA(m)} aria-current={ruta === m ? 'page' : undefined} aria-label={MUNDOS[m].nombre} style={{ ['--mundo' as any]: MUNDOS[m].color }}>

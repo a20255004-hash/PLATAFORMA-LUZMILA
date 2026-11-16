@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { jugar } from '../components/Juegos'
 import { Anillo, Campo, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
-import { CATEGORIAS_P1, CONECTORES, PILARES_VOZ, SEMANA_VOZ } from '../data/estructura'
+import { CONECTORES, PILARES_VOZ, SEMANA_VOZ } from '../data/estructura'
 import { bonita, hoyISO } from '../lib/fechas'
 import { dominioVoz, repasosPendientes, useDatos } from '../store'
 
@@ -13,19 +14,6 @@ export default function Voz() {
   const pend = repasosPendientes(s.voz.palabras)
   const diaSem = new Date().getDay()
 
-  // Cronómetro P1
-  const [cat, setCat] = useState(CATEGORIAS_P1[0])
-  const [seg, setSeg] = useState(90)
-  const [corre, setCorre] = useState(false)
-  const [cuenta, setCuenta] = useState(0)
-  const t = useRef<any>(null)
-  useEffect(() => {
-    if (!corre) return
-    t.current = setInterval(() => setSeg((x) => { if (x <= 1) { clearInterval(t.current); setCorre(false); return 0 } return x - 1 }), 1000)
-    return () => clearInterval(t.current)
-  }, [corre])
-  const empezar = () => { setSeg(90); setCuenta(0); setCorre(true) }
-  const guardarRonda = () => { s.agregar('voz.rondas', { fecha: hoyISO(), categoria: cat, palabras: cuenta }); decir(<>Ronda guardada: <b>{cuenta} palabras</b> en “{cat}”</>, true); setSeg(90); setCuenta(0) }
   const mejor = (c: string) => Math.max(0, ...s.voz.rondas.filter((r) => r.categoria === c).map((r) => r.palabras))
 
   // P4 conectores
@@ -77,16 +65,15 @@ export default function Voz() {
       </div>
 
       {tab === 'p1' && <div className="bento">
-        <div className="c7"><div className="card color pila" style={{ textAlign: 'center' }}>
-          <Campo label="Categoría"><select value={cat} disabled={corre} onChange={(e) => setCat(e.target.value)}>{CATEGORIAS_P1.map((c) => <option key={c}>{c}</option>)}</select></Campo>
-          <div style={{ display: 'grid', placeItems: 'center' }}><Anillo valor={seg / 90} tam={230} grosor={16}><div><div className="crono" aria-live="off">{seg}</div><div className="eyebrow">segundos</div></div></Anillo></div>
-          {corre ? <button className="btn" style={{ minHeight: 84, fontSize: 22 }} onClick={() => setCuenta(cuenta + 1)}>+1 palabra dicha · llevas {cuenta}</button>
-            : seg === 0 ? <div className="pila"><p className="h3">Tiempo. Dijiste {cuenta} palabras.</p><div className="fila" style={{ justifyContent: 'center' }}><button className="btn" onClick={guardarRonda}>Guardar ronda</button><button className="btn linea" onClick={empezar}>Otra vez</button></div></div>
-              : <button className="btn" onClick={empezar}>▶ Empezar (en voz alta)</button>}
-          <p className="porque" style={{ textAlign: 'left', borderColor: 'var(--tinta)', color: 'var(--tinta)' }}>Si te trabas, no pares: describe la forma, la función o el sonido. Después pídele a Claude tu “banco ideal” de esa categoría.</p>
+        <div className="c5"><div className="card color pila" style={{ textAlign: 'center' }}>
+          <span style={{ fontSize: 64 }} className="flota" aria-hidden="true">🧩</span>
+          <h2 className="h2">Lluvia de palabras</h2>
+          <p>90 segundos, una categoría y tú escribiendo cada palabra. Al final ves tu lista, tu marca y cuáles fueron nuevas.</p>
+          <button className="btn" style={{ minHeight: 60, fontSize: 18 }} onClick={() => jugar('palabras')}>▶ Jugar ronda</button>
+          <div className="fila" style={{ justifyContent: 'center' }}><button className="pill" onClick={() => jugar('conectores')}>🔗 Une las ideas</button><button className="pill" onClick={() => jugar('garantia')}>⚖️ La pieza que falta</button></div>
         </div></div>
-        <div className="c5"><div className="card pila-s"><span className="eyebrow">Tus rondas</span>
-          {s.voz.rondas.length ? s.voz.rondas.slice(0, 12).map((r) => <div key={r.id} className="item entre chico"><span>{r.categoria}<br /><span className="suave">{bonita(r.fecha)}</span></span><span className="fila"><b className="num" style={{ fontSize: 24 }}>{r.palabras}</b>{r.palabras === mejor(r.categoria) && <span className="pill mundo">mejor tuya</span>}</span></div>) : <Vacio>Sin rondas todavía. Te comparas solo con tu propia marca anterior.</Vacio>}
+        <div className="c7"><div className="card pila-s"><span className="eyebrow">Tus rondas</span>
+          {s.voz.rondas.length ? s.voz.rondas.slice(0, 10).map((r) => <div key={r.id} className="item chico"><span className="entre"><span><b>{r.categoria}</b> · <span className="suave">{bonita(r.fecha)}</span></span><span className="fila"><b className="num" style={{ fontSize: 24 }}>{r.palabras}</b>{r.palabras === mejor(r.categoria) && <span className="pill mundo">mejor tuya</span>}</span></span>{Array.isArray(r.lista) && <span className="suave">{r.lista.join(' · ')}</span>}</div>) : <Vacio>Sin rondas todavía. Te comparas solo con tu propia marca anterior.</Vacio>}
         </div></div>
       </div>}
 

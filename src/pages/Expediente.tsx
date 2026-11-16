@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { jugar } from '../components/Juegos'
 import { Campo, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import { DIMENSIONES, DISTORSIONES, TIPOS_EVIDENCIA } from '../data/estructura'
 import { bonita, dif, esISO, hoyISO } from '../lib/fechas'
@@ -107,6 +108,7 @@ export default function Expediente() {
         <div className="c5 pila"><div className="card color pila"><span className="eyebrow">Cazadora de distorsiones</span><div className="num" style={{ fontSize: 72 }}>{s.distorsiones.length}</div>
           {cuentaDist.map((d) => <div key={d.id} className="entre chico"><span>{d.emoji} {d.id}</span><b className="mono">{d.n}</b></div>)}
           <button className="btn" onClick={() => { setF({ fecha: hoyISO(), tipo: DISTORSIONES[0].id }); setHoja('caza') }}>+ Cazar una</button>
+          <button className="btn claro" onClick={() => jugar('cazadora')}>🎮 Practicar: ¿quién habla?</button>
           <p className="porque" style={{ borderColor: 'var(--tinta)', color: 'var(--tinta)' }}>El mejor reencuadre junta compasión y responsabilidad: ni “soy un desastre” ni “no pasó nada”. Nombra el error con precisión, sin carga moral.</p></div></div>
         <div className="c7 lista">{s.distorsiones.length ? [...s.distorsiones].sort((a, b) => (a.fecha < b.fecha ? 1 : -1)).map((d) => <div key={d.id} className="card pila-s" style={{ padding: 18 }}><div className="entre"><span className="pill mundo">{DISTORSIONES.find((x) => x.id === d.tipo)?.emoji} {d.tipo}</span><span className="chico suave">{bonita(d.fecha)}</span></div><p className="chico suave">{d.situacion}</p>{d.reencuadre && <p><b>Reencuadre:</b> {d.reencuadre}</p>}</div>) : <Vacio>Cuando caces un pensamiento tramposo, anótalo aquí.</Vacio>}</div>
       </div>}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { jugar } from '../components/Juegos'
 import { Anillo, Campo, Cuenta, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import { PILARES_ZORRO, XP_ZORRO } from '../data/estructura'
 import { bonita, diaSemana, hoyISO, queToca } from '../lib/fechas'
@@ -49,6 +50,7 @@ export default function Zorro() {
         <Titulo3D texto="ZORRO" />
         <p className="serif" style={{ fontSize: 'clamp(22px, 3vw, 32px)', maxWidth: 720 }}>El humor ya es tuyo: aquí solo se le deja salir. Nunca a costa tuya, siempre sobre la situación.</p>
         <div className="fila"><button className="btn" onClick={momento}>🦊 ¡Momento Zorro! +1</button><button className="btn claro" onClick={() => abrir('reg', { enfoque: pilar.id, xp: pilar.xp })}>+ Registrar</button></div>
+        <div className="fila"><span className="eyebrow">Jugar:</span><button className="pill mundo" onClick={() => jugar('definicion')}>🤧 Definiciones locas</button><button className="pill mundo" onClick={() => jugar('giro')}>🥪 Frase con giro</button><button className="pill mundo" onClick={() => jugar('remate')}>🎤 Remate seco</button><button className="pill mundo" onClick={() => jugar('cartas')}>🌍 Cartas</button></div>
       </header>
 
       <div className="bento">

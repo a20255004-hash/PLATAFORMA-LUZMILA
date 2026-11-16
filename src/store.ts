@@ -24,6 +24,7 @@ export const vacio = () => ({
   retomas: [] as string[],
   alterEgo: [] as any[],
   disfrute: [] as any[],
+  juegos: [] as any[],
   patrones: { fortalezas: [] as any[], debiles: [] as any[] },
   fasesAbiertas: [] as number[],
   fasesEstado: {} as Record<string, string>,

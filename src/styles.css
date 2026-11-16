@@ -240,3 +240,29 @@ table.t { width: 100%; border-collapse: collapse; font-size: 13.5px; } table.t t
   .card { padding: 18px; }
   .hero { min-height: 600px; }
 }
+
+/* ───── Juegos ───── */
+.entrada { width: 100%; font-size: 22px; font-weight: 600; padding: 16px 18px; border-radius: 20px; border: 2.5px solid var(--tinta); background: var(--papel); outline: none; box-shadow: 0 6px 0 var(--tinta); line-height: 1.4; resize: vertical; }
+.entrada:focus { box-shadow: 0 6px 0 var(--tinta), 0 0 0 5px var(--mundo); }
+textarea.entrada { font-size: 18px; font-weight: 500; }
+.nube { display: flex; flex-wrap: wrap; gap: 8px; min-height: 56px; align-content: flex-start; }
+.chipw { padding: 8px 14px; border-radius: 999px; background: var(--mundo); font-weight: 700; font-size: 15px; box-shadow: inset 0 0 0 2px rgba(42, 27, 61, 0.85), 0 3px 0 var(--tinta); }
+.mazo { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; perspective: 1200px; }
+.carta { position: relative; aspect-ratio: 3 / 4.3; transform-style: preserve-3d; transition: transform 0.75s var(--ease); border-radius: 20px; }
+.carta:hover { transform: translateY(-6px) rotateZ(-1.5deg); } .carta.vuelta { transform: rotateY(180deg); }
+.carta .cara { position: absolute; inset: 0; border-radius: 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; gap: 4px; place-content: center; justify-items: center; text-align: center; padding: 12px; box-shadow: var(--sombra-s); }
+.carta .dorso { background: var(--tinta); color: var(--crema); background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.14) 0 22%, transparent 23%), repeating-conic-gradient(rgba(255, 255, 255, 0.06) 0 15deg, transparent 15deg 30deg); }
+.carta .dorso .eyebrow { color: var(--mundo); }
+.carta .frente { background: var(--papel); transform: rotateY(180deg); border: 2px solid var(--tinta); }
+.juegos { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.juego { text-align: left; width: 100%; padding: 18px; border-radius: 24px; }
+.ruleta { --R: clamp(88px, 28vw, 118px); position: relative; width: min(100%, 320px); aspect-ratio: 1; margin: 6px auto; }
+.ruleta .plato { position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 6px var(--tinta), 0 14px 0 var(--tinta), var(--sombra); }
+.ruleta .sector { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px; display: grid; place-items: center; font-size: 26px; }
+.ruleta .flecha { position: absolute; left: 50%; top: -20px; transform: translateX(-50%); z-index: 2; font-size: 30px; color: var(--tinta); }
+.ruleta .centro-r { position: absolute; inset: 34%; border-radius: 50%; background: var(--tinta); color: var(--crema); font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: 0.04em; box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35); transition: transform 0.2s var(--ease); }
+.ruleta .centro-r:hover { transform: scale(1.08); } .ruleta .centro-r:active { transform: scale(0.94); }
+.cinta { margin: 18px -16px 0; overflow: hidden; background: var(--tinta); color: var(--crema); transform: rotate(-1.2deg); padding: 12px 0; box-shadow: var(--sombra-s); }
+.cinta > div { display: inline-flex; gap: 28px; white-space: nowrap; animation: cinta 38s linear infinite; font-family: var(--display); font-weight: 750; font-size: clamp(18px, 2.6vw, 26px); letter-spacing: -0.02em; }
+.cinta i { color: var(--lima); font-style: normal; margin-left: 28px; }
+@keyframes cinta { to { transform: translateX(-50%); } }

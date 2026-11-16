@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { jugar } from '../components/Juegos'
 import { Anillo, Barra, Campo, Cuenta, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import temario from '../data/culta.json'
 import { BLOQUES_CULTA, NIVELES_CULTA, RUBRICA } from '../data/estructura'
@@ -47,6 +48,7 @@ export default function Culta() {
         <Titulo3D texto="CULTA" />
         <p className="serif" style={{ fontSize: 'clamp(22px, 3vw, 32px)', maxWidth: 720 }}>Culta y alturada. No memorizar: entender, explicar con tus palabras, relacionar y aplicar.</p>
         <div className="fila"><button className="btn" onClick={() => setForm(nuevo())}>+ Registrar sesión</button><span className="pill mundo">{BLOQUES_CULTA[bloqueCulta()].emoji} Esta semana: {BLOQUES_CULTA[bloqueCulta()].nombre}</span></div>
+        <div className="fila"><span className="eyebrow">Jugar con tus temas:</span><button className="pill mundo" onClick={() => jugar('conexion')}>🧵 Hilo entre temas</button><button className="pill mundo" onClick={() => jugar('dosdir')}>↔️ En dos direcciones</button><button className="pill mundo" onClick={() => jugar('manzanitas')}>🍎 Con manzanitas</button></div>
       </header>
 
       <div className="bento">
