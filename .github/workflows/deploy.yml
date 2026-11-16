@@ -1,7 +1,7 @@
 name: Publicar en GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [main, claude/blissful-ramanujan-b3eruw]
   workflow_dispatch:
 permissions:
   contents: read
