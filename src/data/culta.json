@@ -1,0 +1,318 @@
+[
+ {
+  "id": "B1",
+  "categorias": [
+   {
+    "nombre": "Fundamentos y Teoría Administrativa",
+    "temas": [
+     "Escuelas del pensamiento administrativo (Científica, Clásica, Humanista, Burocrática, Estructuralista, Sistémica, Contingencial)",
+     "Autores clave: Taylor, Fayol, Weber, Mayo, Drucker, Mintzberg, Senge",
+     "14 Principios de Fayol",
+     "Proceso / ciclo administrativo: Planear, Organizar, Dirigir, Controlar",
+     "Enfoques contemporáneos de administración"
+    ]
+   },
+   {
+    "nombre": "Planeación y Gestión Estratégica",
+    "temas": [
+     "Misión, visión, valores y objetivos SMART",
+     "Análisis FODA y PESTEL",
+     "5 Fuerzas de Porter",
+     "Balance Scorecard (4 perspectivas)",
+     "Cadena de valor",
+     "Planeamiento estratégico y gerencia estratégica",
+     "Control de gestión"
+    ]
+   },
+   {
+    "nombre": "Organización y Cultura",
+    "temas": [
+     "Diseño organizacional y organigramas",
+     "Cultura organizacional",
+     "Comportamiento y desarrollo organizacional",
+     "Gestión por procesos y organización"
+    ]
+   },
+   {
+    "nombre": "Dirección, Liderazgo y Talento Humano",
+    "temas": [
+     "Teorías de motivación: Maslow, Herzberg, McGregor",
+     "Estilos y teorías de liderazgo",
+     "Gestión del talento humano (selección, desempeño, desarrollo)",
+     "Trabajo en equipo",
+     "Toma de decisiones",
+     "Habilidades gerenciales"
+    ]
+   },
+   {
+    "nombre": "Control, Calidad e Indicadores",
+    "temas": [
+     "Indicadores y KPI",
+     "Gestión de la calidad (nociones de normas ISO)",
+     "Costos para la toma de decisiones"
+    ]
+   },
+   {
+    "nombre": "Finanzas y Contabilidad",
+    "temas": [
+     "Contabilidad general y estados financieros",
+     "Análisis financiero y ratios",
+     "Matemática financiera",
+     "VAN, TIR y evaluación de proyectos",
+     "Formulación y gestión presupuestal"
+    ]
+   },
+   {
+    "nombre": "Marketing",
+    "temas": [
+     "Mix de marketing (4P / 7P)",
+     "Segmentación y posicionamiento",
+     "Investigación de mercados",
+     "Marketing digital"
+    ]
+   },
+   {
+    "nombre": "Operaciones, Logística e Innovación",
+    "temas": [
+     "Gestión de operaciones",
+     "Gestión logística y cadena de suministro",
+     "Productividad e innovación",
+     "Investigación operativa"
+    ]
+   },
+   {
+    "nombre": "Emprendimiento y Modelos de Negocio",
+    "temas": [
+     "Modelo Canvas",
+     "Plan de negocios",
+     "Emprendimiento y modelos de negocio"
+    ]
+   },
+   {
+    "nombre": "Gestión Pública y Comercio Exterior",
+    "temas": [
+     "Gestión pública",
+     "Comercio internacional / comercio exterior"
+    ]
+   },
+   {
+    "nombre": "Administración, Tecnología e IA (temas de hoy)",
+    "temas": [
+     "Transformación digital en las organizaciones",
+     "IA aplicada a la gestión y toma de decisiones",
+     "Analítica de datos para decisiones empresariales",
+     "Automatización de procesos administrativos"
+    ]
+   },
+   {
+    "nombre": "Economía y Derecho para la Gestión",
+    "temas": [
+     "Teoría económica micro y macro aplicada a la empresa",
+     "Derecho empresarial y laboral básico",
+     "Realidad nacional e internacional aplicada a los negocios"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "B2",
+  "categorias": [
+   {
+    "nombre": "Historia",
+    "temas": [
+     "Grandes procesos del siglo XX (guerras mundiales, guerra fría)",
+     "Historia del Perú (procesos clave: independencia, república, siglo XX)",
+     "Revoluciones que cambiaron el mundo"
+    ]
+   },
+   {
+    "nombre": "Economía",
+    "temas": [
+     "Sistemas económicos (capitalismo, socialismo, economías mixtas)",
+     "Grandes crisis económicas de la historia",
+     "Economía (Psicología aplicada): Economía conductual — sesgos, Sistema 1/2, nudges",
+     "Conceptos económicos de actualidad (inflación, tipo de cambio, PBI)"
+    ]
+   },
+   {
+    "nombre": "Política",
+    "temas": [
+     "Sistemas y formas de gobierno",
+     "Ideologías políticas principales",
+     "Actualidad política nacional e internacional"
+    ]
+   },
+   {
+    "nombre": "Sociedad y Sociología",
+    "temas": [
+     "Fenómenos sociales contemporáneos",
+     "Desigualdad y movilidad social",
+     "Cambio social y globalización"
+    ]
+   },
+   {
+    "nombre": "Ciencia",
+    "temas": [
+     "Descubrimientos científicos que cambiaron la historia",
+     "Nociones básicas de física, biología y astronomía relevantes hoy"
+    ]
+   },
+   {
+    "nombre": "Tecnología",
+    "temas": [
+     "Inteligencia artificial: qué es y cómo está cambiando el mundo",
+     "Internet, redes y transformación digital",
+     "Tecnologías que están definiendo esta década"
+    ]
+   },
+   {
+    "nombre": "Filosofía",
+    "temas": [
+     "Grandes corrientes filosóficas (desde la Antigüedad hasta hoy)",
+     "Pensadores clave y su idea central",
+     "Ética aplicada a dilemas actuales"
+    ]
+   },
+   {
+    "nombre": "Psicología",
+    "temas": [
+     "Psicología general (procesos básicos: percepción, memoria, aprendizaje)",
+     "Psicología social (por qué actuamos distinto en grupo)",
+     "Sesgos cognitivos comunes en la vida diaria"
+    ]
+   },
+   {
+    "nombre": "Arte y Literatura",
+    "temas": [
+     "Movimientos artísticos principales",
+     "Autores y obras fundamentales de la literatura universal y peruana"
+    ]
+   },
+   {
+    "nombre": "Geografía y Geopolítica",
+    "temas": [
+     "Geografía económica y política del Perú",
+     "Geopolítica básica global"
+    ]
+   },
+   {
+    "nombre": "Empresas y Negocios (cultura corporativa global)",
+    "temas": [
+     "Casos de empresas y marcas relevantes a nivel mundial",
+     "Modelos de negocio disruptivos (tecnológicas, plataformas)"
+    ]
+   },
+   {
+    "nombre": "Derecho y Ciudadanía General",
+    "temas": [
+     "Nociones básicas de la Constitución y derechos ciudadanos",
+     "Cómo funciona el sistema de justicia, a grandes rasgos"
+    ]
+   },
+   {
+    "nombre": "Medio Ambiente y Sostenibilidad",
+    "temas": [
+     "Cambio climático: causas y consecuencias",
+     "Sostenibilidad aplicada a empresas y sociedad (ESG)"
+    ]
+   },
+   {
+    "nombre": "Salud y Bienestar (nociones generales)",
+    "temas": [
+     "Salud mental: conceptos básicos que toda persona informada debería manejar",
+     "Hábitos de bienestar respaldados por evidencia"
+    ]
+   },
+   {
+    "nombre": "Cosmovisiones y Religión Comparada",
+    "temas": [
+     "Grandes tradiciones religiosas y su visión del mundo",
+     "Cosmovisión andina y otras cosmovisiones originarias"
+    ]
+   },
+   {
+    "nombre": "Actualidad",
+    "temas": [
+     "Noticia relevante de la semana (análisis crítico)",
+     "Tema internacional en seguimiento"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "B3",
+  "categorias": [
+   {
+    "nombre": "Vocabulario y precisión léxica",
+    "temas": [
+     "Ampliar vocabulario evaluativo (más allá de 'bonito/lindo')",
+     "Precisión: elegir la palabra exacta, no la aproximada"
+    ]
+   },
+   {
+    "nombre": "Estructura y orden de ideas",
+    "temas": [
+     "Subordinación vs. yuxtaposición de ideas",
+     "Conectores lógicos (causales, contraste, concesión)"
+    ]
+   },
+   {
+    "nombre": "Argumentación",
+    "temas": [
+     "Estructura de Toulmin (dato, garantía, respaldo, conclusión)",
+     "Detectar falacias y sesgos propios",
+     "Steelmanning (argumentar la mejor versión del otro lado)"
+    ]
+   },
+   {
+    "nombre": "Explicar con sencillez",
+    "temas": [
+     "Técnica Feynman: explicar un concepto complejo a un niño",
+     "Traducir jerga técnica de Administración a lenguaje simple"
+    ]
+   },
+   {
+    "nombre": "Pensar rápido / preguntas inesperadas",
+    "temas": [
+     "Responder bajo presión sin quedarse en blanco",
+     "Estructurar una respuesta improvisada en segundos"
+    ]
+   },
+   {
+    "nombre": "Debates y defensa de postura",
+    "temas": [
+     "Sostener una posición con fundamentos",
+     "Responder a la réplica sin perder el hilo"
+    ]
+   },
+   {
+    "nombre": "Entrevistas profesionales",
+    "temas": [
+     "Simulacro de entrevista laboral",
+     "Responder 'cuéntame de ti' con estructura"
+    ]
+   },
+   {
+    "nombre": "Exposiciones y oratoria",
+    "temas": [
+     "Apertura y cierre memorable de una exposición",
+     "Manejo de nervios y lenguaje corporal al hablar"
+    ]
+   },
+   {
+    "nombre": "Reuniones y conversaciones profesionales",
+    "temas": [
+     "Participar con seguridad en una reunión",
+     "Dar una opinión profesional de forma clara y breve"
+    ]
+   },
+   {
+    "nombre": "Análisis crítico de medios",
+    "temas": [
+     "Leer una noticia identificando sesgo y evidencia",
+     "Distinguir opinión de hecho en un artículo"
+    ]
+   }
+  ]
+ }
+]
