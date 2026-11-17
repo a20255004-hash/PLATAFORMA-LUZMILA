@@ -73,7 +73,7 @@ export default function Hoy() {
       {!s.cargado && (
         <Sube className="card color pila" style={{ marginTop: 18, ['--mundo' as any]: 'var(--mostaza)' }}>
           <h2 className="h2">Primero, trae tu archivo personal 🗝️</h2>
-          <p>Tus registros, tu Expediente y tus fotos no están publicados en internet: viven en un archivo privado (<b>luzmila-datos.json</b>). Cárgalo una vez y se queda guardado en este dispositivo.</p>
+          <p>Tus registros y tu Expediente no están publicados en internet: viven en un archivo privado (<b>luzmila-datos.json</b>). Cárgalo una vez y se queda guardado en este dispositivo.</p>
           <div className="fila">
             <label className="btn" style={{ cursor: 'pointer' }}>Cargar mi archivo<input type="file" accept="application/json,.json" className="sr" onChange={(e) => e.target.files?.[0] && leerArchivo(e.target.files[0], s.importar)} /></label>
             <button className="btn linea" onClick={() => s.poner('cargado', true)}>Empezar en blanco</button>

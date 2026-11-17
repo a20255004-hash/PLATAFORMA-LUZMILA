@@ -39,7 +39,7 @@ function Escena({ fotos, nombre }: { fotos: string[]; nombre: string }) {
   const grupo = useRef<THREE.Group>(null)
   const { viewport } = useThree()
   const alto = viewport.width < 7 // celular vertical
-  const escala = Math.min(1, viewport.width / (alto ? 7.4 : 12.5))
+  const escala = Math.min(1, viewport.width / (alto ? 8.8 : 13.2))
   useFrame((s) => {
     if (!grupo.current) return
     grupo.current.rotation.y = THREE.MathUtils.lerp(grupo.current.rotation.y, s.pointer.x * 0.28, 0.05)

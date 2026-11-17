@@ -85,7 +85,11 @@ export const useDatos = create<Datos & Acciones>()(
   ),
 )
 
-export const fotosGuardadas = (): string[] => { try { return JSON.parse(localStorage.getItem(CLAVE_FOTOS) || '[]') } catch { return [] } }
+export const FOTOS_PUBLICAS = [1, 2, 3, 4, 5].map((n) => `${import.meta.env.BASE_URL}fotos/f${n}.jpg`)
+export const fotosGuardadas = (): string[] => {
+  try { const propias = JSON.parse(localStorage.getItem(CLAVE_FOTOS) || '[]'); if (Array.isArray(propias) && propias.length) return propias } catch { /* sin fotos propias */ }
+  return FOTOS_PUBLICAS
+}
 export const exportar = (s: Datos) => {
   const limpio: any = {}
   for (const k of Object.keys(vacio())) limpio[k] = (s as any)[k]
