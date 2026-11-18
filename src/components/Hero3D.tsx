@@ -54,8 +54,8 @@ function Escena({ fotos, nombre }: { fotos: string[]; nombre: string }) {
     <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.3, 0.3]} azimuth={[-0.7, 0.7]}>
       <group ref={grupo} scale={escala}>
         <Center>
-          <Text3D font={fuente as any} size={alto ? 1.25 : 1.9} height={0.55} bevelEnabled bevelSize={0.035} bevelThickness={0.05} bevelSegments={4} curveSegments={10} letterSpacing={-0.04}>
-            {nombre.toUpperCase()}
+          <Text3D font={fuente as any} size={alto ? 1.5 : 2.3} height={0.55} bevelEnabled bevelSize={0.035} bevelThickness={0.05} bevelSegments={4} curveSegments={10} letterSpacing={0.01}>
+            {nombre}
             <meshStandardMaterial attach="material-0" color={C.tinta} roughness={0.3} />
             <meshStandardMaterial attach="material-1" color={C.lima} roughness={0.45} />
           </Text3D>

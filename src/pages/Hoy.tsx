@@ -50,7 +50,7 @@ export default function Hoy() {
   return (
     <div className="pagina">
       <section className="hero">
-        {sinMovimiento() ? <div className="hero-plano"><Titulo3D texto={s.perfil.nombre.toUpperCase()} /></div> : <Suspense fallback={<div className="hero-plano"><Titulo3D texto={s.perfil.nombre.toUpperCase()} /></div>}><Hero3D fotos={fotos} nombre={s.perfil.nombre} /></Suspense>}
+        {sinMovimiento() ? <div className="hero-plano"><Titulo3D texto={s.perfil.nombre} /></div> : <Suspense fallback={<div className="hero-plano"><Titulo3D texto={s.perfil.nombre} /></div>}><Hero3D fotos={fotos} nombre={s.perfil.nombre} /></Suspense>}
         <div className="hero-txt">
           <div className="entre" style={{ alignItems: 'start' }}>
             <div className="pila-s">
