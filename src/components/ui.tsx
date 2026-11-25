@@ -103,8 +103,8 @@ export function Hoja({ abierta, cerrar, titulo, children }: { abierta: boolean; 
     if (!abierta) return
     const k = (e: KeyboardEvent) => e.key === 'Escape' && cerrar()
     window.addEventListener('keydown', k)
-    document.body.style.overflow = 'hidden'
-    return () => { window.removeEventListener('keydown', k); document.body.style.overflow = '' }
+    document.body.style.overflow = 'hidden'; document.body.classList.add('con-hoja')
+    return () => { window.removeEventListener('keydown', k); document.body.style.overflow = ''; document.body.classList.remove('con-hoja') }
   }, [abierta])
   return (
     <AnimatePresence>

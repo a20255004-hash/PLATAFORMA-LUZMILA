@@ -1,6 +1,7 @@
 // Enlaces de estudio por tema. Son búsquedas dirigidas (no apuntan a un artículo fijo), así que siempre funcionan;
 // tú eliges la fuente y verificas. Para citar en APA, pídele a Claude que te ayude a armar la referencia.
 import temario from '../data/culta.json'
+import { FICHAS, type Q } from '../data/temas'
 
 export type Enlace = { etiqueta: string; emoji: string; url: string; para: string }
 
@@ -58,3 +59,78 @@ export function temaSugerido(sesiones: any[], bloque: 'B1' | 'B2' | 'B3', semill
   const elegido = [...sinVer].sort((a, b) => (porCat.get(a.categoria) || 0) - (porCat.get(b.categoria) || 0))[0]
   return { ...elegido, motivo: `Nuevo tema en “${elegido.categoria}”, donde llevas menos recorrido.`, tipo: 'nuevo' as const }
 }
+
+
+/* ───────── Fichas de estudio: resumen, enlaces y quiz por tema ───────── */
+const MEDIOS: Enlace[] = [
+  { etiqueta: 'BBC Mundo', emoji: '📰', url: 'https://www.bbc.com/mundo', para: 'Noticias internacionales en español' },
+  { etiqueta: 'DW Español', emoji: '🌍', url: 'https://www.dw.com/es', para: 'Actualidad internacional y análisis' },
+  { etiqueta: 'El Comercio (Perú)', emoji: '🇵🇪', url: 'https://elcomercio.pe', para: 'Actualidad nacional' },
+  { etiqueta: 'Reuters', emoji: '🗞️', url: 'https://www.reuters.com/world/', para: 'Agencia internacional (en inglés)' },
+]
+const RAE: Enlace[] = [
+  { etiqueta: 'Diccionario de la RAE', emoji: '📕', url: 'https://dle.rae.es/', para: 'Significado y sinónimos precisos' },
+  { etiqueta: 'Fundéu', emoji: '✍️', url: 'https://www.fundeu.es/', para: 'Dudas de uso del español' },
+]
+const norm = (t: string) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+/** Posición del tema dentro del temario (el orden coincide con FICHAS). */
+export const indiceTema = (tema: string) => {
+  const todos = todosLosTemas().map((t) => norm(t.tema))
+  const t = norm(tema)
+  let i = todos.indexOf(t)
+  if (i < 0) i = todos.findIndex((x) => x.startsWith(t.slice(0, 22)) || t.startsWith(x.slice(0, 22)))
+  return i
+}
+export const fichaDe = (tema: string) => {
+  const i = indiceTema(tema)
+  const f = i >= 0 ? FICHAS[i] : undefined
+  return f ? { i, resumen: f[1], wikis: f[2].split('|'), quiz: f[3], lectura: f[4] } : null
+}
+
+export function enlacesFicha(tema: string, bloque: 'B1' | 'B2' | 'B3' = 'B1'): Enlace[] {
+  const f = fichaDe(tema)
+  if (!f) return enlacesTema(tema, bloque)
+  const fuente: Enlace[] = []
+  f.wikis.forEach((w) => {
+    if (w === '@medios') fuente.push(...MEDIOS)
+    else if (w === '@rae') fuente.push(...RAE)
+    else { const t = w.replaceAll('_', ' '); fuente.push({ etiqueta: `Wikipedia: ${t}`, emoji: '📖', url: `https://es.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(t)}&go=Ir`, para: 'Artículo de referencia (si el título exacto no existe, abre la búsqueda)' }) }
+  })
+  const resto = enlacesTema(tema, bloque).filter((e) => !e.etiqueta.startsWith('Panorama') && !e.etiqueta.startsWith('Diccionario') && !e.etiqueta.startsWith('Dudas') && !e.etiqueta.startsWith('Britannica'))
+  const libro: Enlace[] = f.lectura ? [{ etiqueta: f.lectura, emoji: '📚', url: `https://www.google.com/search?tbm=bks&hl=es&q=${encodeURIComponent(f.lectura)}`, para: 'Lectura sugerida' }] : []
+  return [...fuente, ...libro, ...resto.filter((e) => !e.etiqueta.startsWith('Libros sobre'))]
+}
+export const linkWikipedia = (tema: string) => { const f = fichaDe(tema); const w = f?.wikis.find((x) => !x.startsWith('@')); return w ? w.replaceAll('_', ' ') : null }
+
+/* ───────── Quiz ───────── */
+export type Pregunta = { q: string; opciones: string[]; correcta: number; origen: 'ficha' | 'idea' }
+const mezclar = <T,>(a: T[]) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]] } return b }
+const deQ = (q: Q): Pregunta => { const op = mezclar([q[1], q[2], q[3], q[4]]); return { q: q[0], opciones: op, correcta: op.indexOf(q[1]), origen: 'ficha' } }
+const PAL = /[A-Za-zÁÉÍÓÚáéíóúñÑ]{7,}/g
+
+function completar(resumen: string, pool: string[]): Pregunta | null {
+  for (const fr of mezclar(resumen.split(/(?<=[.;:])\s+/)).filter((x) => x.split(' ').length >= 7)) {
+    const cand = (fr.match(PAL) || []).filter((w) => !/^(Peru|Perú)/.test(w))
+    if (!cand.length) continue
+    const palabra = mezclar(cand.sort((a, b) => b.length - a.length).slice(0, 3))[0]
+    const falsas = mezclar([...new Set(pool.filter((w) => norm(w) !== norm(palabra) && !norm(resumen).includes(norm(w)) && Math.abs(w.length - palabra.length) <= 4))]).slice(0, 3)
+    if (falsas.length < 3) continue
+    const op = mezclar([palabra, ...falsas])
+    return { q: `Completa la idea: «${fr.replace(palabra, '_____')}»`, opciones: op, correcta: op.indexOf(palabra), origen: 'idea' }
+  }
+  return null
+}
+
+/** 2 preguntas escritas a mano + 2 «completa la idea» generadas del resumen (cambian cada vez). */
+export function armarQuiz(tema: string): Pregunta[] {
+  const f = fichaDe(tema)
+  if (!f) return []
+  const [a, b] = f.i < 50 ? [0, 50] : f.i < 90 ? [50, 90] : [90, FICHAS.length]
+  const pool = [...new Set(FICHAS.filter((_, i) => i !== f.i && i >= a && i < b).flatMap((x) => x[1].match(PAL) || []))]
+  const base = f.quiz.map(deQ)
+  const extra = [completar(f.resumen, pool), completar(f.resumen, pool)].filter(Boolean) as Pregunta[]
+  const ya = new Set<string>()
+  return mezclar([...base, ...extra]).filter((p) => (ya.has(p.q) ? false : (ya.add(p.q), true)))
+}
+export const ultimoQuiz = (quizzes: any[], tema: string) => (quizzes || []).find((q) => q.tema === tema)

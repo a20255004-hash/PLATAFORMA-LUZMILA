@@ -26,6 +26,7 @@ export const vacio = () => ({
   disfrute: [] as any[],
   juegos: [] as any[],
   evaluaciones: [] as any[],
+  quizzes: [] as any[],
   patrones: { fortalezas: [] as any[], debiles: [] as any[] },
   fasesAbiertas: [] as number[],
   fasesEstado: {} as Record<string, string>,

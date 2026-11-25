@@ -4,7 +4,8 @@ import { jugar } from '../components/Juegos'
 import { JUEGOS } from '../data/juegos'
 import { LETRAS } from '../data/letras'
 import { planDeHoy } from '../lib/cerebro'
-import { useCoach } from '../lib/coachEstado'
+import FichaTema from '../components/FichaTema'
+import { useCoach, useCultaTab } from '../lib/coachEstado'
 import { Anillo, Barra, Cuenta, decir, DeDonde, Sello, sinMovimiento, Sube, Tilt, Titulo3D } from '../components/ui'
 import { BLOQUES_CULTA, FRASES_HOY, MUNDOS } from '../data/estructura'
 import { bloqueCulta, diaProyecto, hoyISO, larga, mesProyecto, queToca, semanaCulta, sumar } from '../lib/fechas'
@@ -113,7 +114,8 @@ export default function Hoy() {
                 <span className="pila-s"><b>{p.titulo}</b><span className="chico">{p.detalle}</span><span className="chico por">Por qué: {p.por}</span></span>
               </button>
             ))}</div>
-            {plan.tema && <div className="pila-s"><span className="eyebrow">Para estudiar hoy · enlaces</span><div className="enlaces">{plan.tema.enlaces.map((e: any) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener" title={e.para}>{e.emoji} {e.etiqueta}</a>)}</div></div>}
+            {plan.tema && <FichaTema tema={plan.tema.tema} bloque={plan.tema.bloque as any} titulo={false} />}
+            {plan.tema && <div><button className="pill" onClick={() => { useCultaTab.getState().poner('ruleta'); irA('culta') }}>🎡 No me late este tema: girar la ruleta</button></div>}
           </Tilt>
         </Sube>}
         <Sube className="c12">

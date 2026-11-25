@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import FichaTema from '../components/FichaTema'
 import { Anillo, Campo, decir, DeDonde, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import { BLOQUES_CULTA } from '../data/estructura'
 import { evaluarAnecdota, evaluarArgumento, evaluarExplicacion, evaluarTexto, tendencia, type Evaluacion } from '../lib/cerebro'
@@ -123,12 +124,8 @@ export default function Coach() {
           {modo === 'explicar' ? (
             <>
               <span className="eyebrow">Para estudiar este tema</span>
-              {tema ? <><div className="h3">{tema.replace(/\(.*?\)/g, '').trim()}</div>
-                <div className="enlaces">{enlaces.map((e) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener" title={e.para}>{e.emoji} {e.etiqueta}</a>)}</div>
-                <ol className="pila-s" style={{ margin: 0, paddingLeft: 18 }}>{PASOS_ESTUDIO.map((p) => <li key={p.n} className="chico"><b>{p.t}.</b> {p.d}</li>)}</ol></>
-                : <p className="chico">Elige un tema y te muestro dónde leerlo.</p>}
-              <DeDonde titulo="Sobre los enlaces">Son búsquedas dirigidas al tema, así que siempre abren algo; la fuente la eliges tú y la verificas. Para citar en APA, pídele a Claude que te arme la referencia.</DeDonde>
-            </>
+              {tema ? <FichaTema tema={tema} bloque={bloqueTema} titulo={false} /> : <p className="chico">Elige un tema y te muestro el resumen y dónde leerlo.</p>}
+                          </>
           ) : (
             <>
               <span className="eyebrow">Qué mido aquí</span>

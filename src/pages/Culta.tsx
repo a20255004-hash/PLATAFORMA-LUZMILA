@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { irA } from '../App'
 import { jugar } from '../components/Juegos'
-import { useCoach } from '../lib/coachEstado'
-import { enlacesTema, PASOS_ESTUDIO, sesionDeTema, temaSugerido } from '../lib/recursos'
+import FichaTema from '../components/FichaTema'
+import RuletaTemas from '../components/RuletaTemas'
+import { useCoach, useCultaTab, useQuiz } from '../lib/coachEstado'
+import { fichaDe, sesionDeTema, temaSugerido, ultimoQuiz } from '../lib/recursos'
 import { Anillo, Barra, Campo, Cuenta, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import temario from '../data/culta.json'
 import { BLOQUES_CULTA, NIVELES_CULTA, RUBRICA } from '../data/estructura'
@@ -14,7 +16,9 @@ const nuevo = () => ({ fecha: hoyISO(), bloque: bloqueCulta() as B, tema: '', it
 
 export default function Culta() {
   const s = useDatos()
-  const [tab, setTab] = useState<'sesiones' | 'temario' | 'fuentes'>('sesiones')
+  const tab = useCultaTab((x) => x.tab)
+  const setTab = useCultaTab((x) => x.poner)
+  const abrirQuiz = useQuiz((x) => x.abrir)
   const [form, setForm] = useState<any>(null)
   const [bloque, setBloque] = useState<B>('B1')
   const [estudiar, setEstudiar] = useState<{ tema: string; bloque: B } | null>(null)
@@ -54,7 +58,7 @@ export default function Culta() {
         <span className="eyebrow">Proyecto Culta · {toca ? 'hoy toca ✨' : 'hoy descansa'} · semana {semanaCulta()}</span>
         <Titulo3D texto="CULTA" />
         <p className="serif" style={{ fontSize: 'clamp(22px, 3vw, 32px)', maxWidth: 720 }}>Culta y alturada. No memorizar: entender, explicar con tus palabras, relacionar y aplicar.</p>
-        <div className="fila"><button className="btn" onClick={() => setForm(nuevo())}>+ Registrar sesión</button><span className="pill mundo">{BLOQUES_CULTA[bloqueCulta()].emoji} Esta semana: {BLOQUES_CULTA[bloqueCulta()].nombre}</span></div>
+        <div className="fila"><button className="btn" onClick={() => setForm(nuevo())}>+ Registrar sesión</button><button className="btn claro" onClick={() => { setTab('ruleta'); setTimeout(() => document.getElementById('tabs-culta')?.scrollIntoView({ behavior: 'smooth' }), 60) }}>🎡 No sé qué estudiar</button><span className="pill mundo">{BLOQUES_CULTA[bloqueCulta()].emoji} Esta semana: {BLOQUES_CULTA[bloqueCulta()].nombre}</span></div>
         <div className="fila"><span className="eyebrow">Jugar con tus temas:</span><button className="pill mundo" onClick={() => jugar('conexion')}>🧵 Hilo entre temas</button><button className="pill mundo" onClick={() => jugar('dosdir')}>↔️ En dos direcciones</button><button className="pill mundo" onClick={() => jugar('manzanitas')}>🍎 Con manzanitas</button></div>
       </header>
 
@@ -62,9 +66,7 @@ export default function Culta() {
         <div className="entre"><span className="eyebrow">📚 {toca ? 'Para estudiar hoy' : 'Tu próximo tema'} · {sug.tipo === 'refuerzo' ? 'refuerzo' : sug.tipo === 'nuevo' ? 'tema nuevo' : 'repaso'}</span><span className="pill" style={{ background: BLOQUES_CULTA[sug.bloque as B].color, color: 'var(--tinta)' }}>{BLOQUES_CULTA[sug.bloque as B].emoji} {BLOQUES_CULTA[sug.bloque as B].nombre}</span></div>
         <h2 className="display" style={{ fontSize: 'clamp(28px, 4.6vw, 52px)' }}>{sug.tema.replace(/\(.*?\)/g, '').trim()}</h2>
         <p className="chico">{sug.motivo}</p>
-        <div className="enlaces">{enlacesTema(sug.tema, sug.bloque as B).map((e) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener" title={e.para}>{e.emoji} {e.etiqueta}</a>)}</div>
-        <div className="fila"><button className="btn claro" onClick={() => evaluar(sug.tema)}>🧠 Explicarlo y que me evalúe</button><button className="btn linea s" style={{ color: 'var(--crema)', boxShadow: 'inset 0 0 0 1.5px rgba(236,250,241,.4)' }} onClick={() => setForm({ ...nuevo(), bloque: sug.bloque, tema: sug.tema })}>+ Registrar sesión</button></div>
-        <p className="porque" style={{ borderColor: 'var(--lima)', color: 'rgba(236,250,241,.75)' }}>Los enlaces son búsquedas dirigidas al tema: tú eliges la fuente y la verificas. Plan: panorama (5 min) → una fuente más (10 min) → explicarlo sin mirar.</p>
+        <FichaTema tema={sug.tema} bloque={sug.bloque as B} titulo={false} onRegistrar={() => setForm({ ...nuevo(), bloque: sug.bloque, tema: sug.tema })} />
       </Tilt></Sube>
 
       <div className="bento">
@@ -95,8 +97,8 @@ export default function Culta() {
         ))}</div><p className="porque">Repasar a los 2, 7 y 21 días aplana la curva del olvido (Ebbinghaus). Sin fecha límite: aparecen cuando ya toca y esperan sin culpa.</p></div></Sube>}
       </div>
 
-      <div className="tabs" style={{ marginTop: 26 }} role="tablist">
-        {([['sesiones', '📓 Sesiones'], ['temario', '🗂️ Temario'], ['fuentes', '📚 Fuentes']] as const).map(([k, t]) => <button key={k} role="tab" aria-selected={tab === k} aria-pressed={tab === k} className="pill" onClick={() => setTab(k)}>{t}</button>)}
+      <div className="tabs" id="tabs-culta" style={{ marginTop: 26, scrollMarginTop: 90 }} role="tablist">
+        {([['sesiones', '📓 Sesiones'], ['ruleta', '🎡 Ruleta'], ['temario', '🗂️ Temario'], ['fuentes', '📚 Fuentes']] as const).map(([k, t]) => <button key={k} role="tab" aria-selected={tab === k} aria-pressed={tab === k} className="pill" onClick={() => setTab(k)}>{t}</button>)}
       </div>
 
       {tab === 'sesiones' && (
@@ -131,6 +133,8 @@ export default function Culta() {
         </div>
       )}
 
+      {tab === 'ruleta' && <RuletaTemas onRegistrar={(tema, bloque) => setForm({ ...nuevo(), bloque, tema })} />}
+
       {tab === 'temario' && (
         <div className="pila">
           <div className="fila">{(['B1', 'B2', 'B3'] as B[]).map((b) => <button key={b} className="pill" aria-pressed={bloque === b} onClick={() => setBloque(b)}>{BLOQUES_CULTA[b].emoji} {BLOQUES_CULTA[b].nombre}</button>)}</div>
@@ -141,7 +145,7 @@ export default function Culta() {
                 {c.temas.map((t: string) => { const u = usado(t); return (
                   <div key={t} className="item chico" style={{ background: u ? BLOQUES_CULTA[bloque].color : undefined, gridTemplateColumns: '1fr auto', alignItems: 'center' }}>
                     <button style={{ textAlign: 'left' }} onClick={() => setForm({ ...nuevo(), bloque, tema: t })}><span className="entre"><span>{t}</span>{u ? <b>{u.nota}</b> : <span className="suave">+</span>}</span></button>
-                    <button className="pill" onClick={() => setEstudiar({ tema: t, bloque })} aria-label={`Estudiar: ${t}`}>🔗 Estudiar</button>
+                    <span className="fila" style={{ gap: 6 }}>{fichaDe(t) && <button className="pill" onClick={() => abrirQuiz(t, bloque)} aria-label={`Quiz: ${t}`}>🎯{(() => { const q = ultimoQuiz(s.quizzes, t); return q ? ` ${q.aciertos}/${q.total}` : ' Quiz' })()}</button>}<button className="pill" onClick={() => setEstudiar({ tema: t, bloque })} aria-label={`Estudiar: ${t}`}>🔗 Estudiar</button></span>
                   </div>) })}
               </div></Sube>
             ))}
@@ -156,13 +160,7 @@ export default function Culta() {
       )}
 
       <Hoja abierta={!!estudiar} cerrar={() => setEstudiar(null)} titulo="Estudiar este tema">
-        {estudiar && <div className="pila">
-          <h3 className="h3">{estudiar.tema}</h3>
-          <div className="enlaces">{enlacesTema(estudiar.tema, estudiar.bloque).map((e) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener"><span>{e.emoji} {e.etiqueta}</span></a>)}</div>
-          <ol className="pila-s" style={{ margin: 0, paddingLeft: 18 }}>{PASOS_ESTUDIO.map((p) => <li key={p.n} className="chico"><b>{p.t}.</b> {p.d}</li>)}</ol>
-          <div className="fila"><button className="btn" onClick={() => { const t = estudiar.tema; setEstudiar(null); evaluar(t) }}>🧠 Explicarlo y evaluar</button><button className="btn linea s" onClick={() => { setForm({ ...nuevo(), bloque: estudiar.bloque, tema: estudiar.tema }); setEstudiar(null) }}>+ Registrar sesión</button></div>
-          <p className="porque">Enlaces de búsqueda: elige tú la fuente y verifícala. Para la referencia APA, pídele a Claude que te la arme.</p>
-        </div>}
+        {estudiar && <FichaTema tema={estudiar.tema} bloque={estudiar.bloque} onRegistrar={() => { setForm({ ...nuevo(), bloque: estudiar.bloque, tema: estudiar.tema }); setEstudiar(null) }} />}
       </Hoja>
 
       <Hoja abierta={!!form} cerrar={() => setForm(null)} titulo="Registrar sesión">

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Component, lazy, ReactNode, Suspense, useEffect, useRef, useState } from 'react'
 import { Arcade } from './components/Juegos'
 import Decor from './components/Decor'
+import QuizModal from './components/QuizModal'
 import { letraDe } from './data/letras'
 import { Avisos, sinMovimiento } from './components/ui'
 import { MUNDOS, MundoId, ORDEN } from './data/estructura'
@@ -82,6 +83,7 @@ export default function App() {
       <Decor />
       <Avisos />
       <Arcade />
+      <QuizModal />
       <nav className="dock" aria-label="Secciones">
         {rapidos.map((m) => (
           <button key={m} onClick={() => irA(m)} aria-current={ruta === m ? 'page' : undefined} aria-label={MUNDOS[m].nombre} style={{ ['--mundo' as any]: MUNDOS[m].color }}>
