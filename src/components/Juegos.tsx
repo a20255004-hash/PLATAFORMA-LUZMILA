@@ -1,3 +1,4 @@
+import { evaluarPalabras } from '../lib/cerebro'
 import { AnimatePresence, motion } from 'motion/react'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { create } from 'zustand'
@@ -86,6 +87,13 @@ function Palabras() {
         {mejor > 0 && <p className="chico suave">{lista.length > mejor ? `Superaste tu marca anterior (${mejor}).` : lista.length === mejor ? `Igualaste tu marca (${mejor}).` : `Tu marca sigue siendo ${mejor}. Hoy fue práctica, y también cuenta.`}</p>}</div>
       <div className="nube">{lista.map((w) => <span key={w} className="chipw" style={{ background: anterior.size && nuevas.includes(w) ? 'var(--lima)' : undefined }}>{w}</span>)}</div>
       {anterior.size > 0 && <p className="chico suave">En verde: las <b>{nuevas.length}</b> que no habías dicho la vez pasada.</p>}
+      {lista.length > 0 && (() => { const e = evaluarPalabras(lista, categoria); return (
+        <div className="item pila-s" style={{ textAlign: 'left' }}>
+          <span className="eyebrow">🧠 Lo que vi en tu ronda</span>
+          <span className="chico">{e.conLista ? <>Reconozco <b>{e.reconocidas.length}</b> de {lista.length} como parte de “{categoria}”{e.otras.length ? <>. No las reconozco (pueden valer, mi lista es corta): <i>{e.otras.slice(0, 6).join(', ')}</i></> : '.'}</> : 'No tengo una lista de referencia para esta categoría, así que reviso solo variedad.'}</span>
+          <span className="chico">Empiezas con <b>{e.iniciales}</b> letras distintas{e.largas.length ? <> y usaste {e.largas.length} palabra(s) largas y precisas ({e.largas.slice(0, 3).join(', ')})</> : <>; ninguna palabra larga todavía: prueba con términos más específicos</>}.</span>
+          {e.faltaron.length > 0 && <span className="chico">Te faltaron, por ejemplo: <b>{e.faltaron.join(', ')}</b>. Para la próxima ronda.</span>}
+        </div>) })()}
       <p className="porque">La página no puede saber si cada palabra encaja en la categoría: quita tú las que no (tocándolas en la ronda). Para tu “banco ideal”, pásale esta lista a Claude.</p>
       <div className="fila"><button className="btn" disabled={!lista.length} onClick={guardar}>Guardar ronda</button><button className="btn linea" onClick={empezar}>Otra vez</button><button className="pill borde" onClick={() => { navigator.clipboard?.writeText(`${categoria}: ${lista.join(', ')}`); decir('Lista copiada 📋') }}>Copiar lista</button></div>
     </div>

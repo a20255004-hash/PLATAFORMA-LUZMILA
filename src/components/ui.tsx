@@ -30,7 +30,7 @@ export function Sube({ children, d = 0, className = '', style }: { children: Rea
 }
 
 /** Título con volumen 3D que sigue al cursor. */
-export function Titulo3D({ texto, chico = false }: { texto: string; chico?: boolean }) {
+export function Titulo3D({ texto, chico = false, nombre = false }: { texto: string; chico?: boolean; nombre?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     if (sinMovimiento()) return
@@ -48,7 +48,7 @@ export function Titulo3D({ texto, chico = false }: { texto: string; chico?: bool
     return () => { window.removeEventListener('pointermove', mover); window.removeEventListener('deviceorientation', giro) }
   }, [])
   return (
-    <h1 className={`t3d ${chico ? 'sm' : ''}`} aria-label={texto}>
+    <h1 className={`t3d ${chico ? 'sm' : ''} ${nombre ? 'nombre' : ''}`} aria-label={texto}>
       <span className="t3d-in" ref={ref} aria-hidden="true">
         {texto.split('').map((l, i) => <span key={i} className="t3d-l" style={{ ['--i' as any]: i }}>{l === ' ' ? ' ' : l}</span>)}
       </span>

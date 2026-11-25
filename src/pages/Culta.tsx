@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react'
+import { irA } from '../App'
 import { jugar } from '../components/Juegos'
+import { useCoach } from '../lib/coachEstado'
+import { enlacesTema, PASOS_ESTUDIO, sesionDeTema, temaSugerido } from '../lib/recursos'
 import { Anillo, Barra, Campo, Cuenta, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import temario from '../data/culta.json'
 import { BLOQUES_CULTA, NIVELES_CULTA, RUBRICA } from '../data/estructura'
@@ -14,6 +17,8 @@ export default function Culta() {
   const [tab, setTab] = useState<'sesiones' | 'temario' | 'fuentes'>('sesiones')
   const [form, setForm] = useState<any>(null)
   const [bloque, setBloque] = useState<B>('B1')
+  const [estudiar, setEstudiar] = useState<{ tema: string; bloque: B } | null>(null)
+  const abrirCoach = useCoach((x) => x.abrir)
   const xp = xpCulta(s)
   const ses = useMemo(() => [...s.culta.sesiones].sort((a, b) => (a.fecha < b.fecha ? 1 : -1)), [s.culta.sesiones])
   const orden = [...ses].reverse()
@@ -39,7 +44,9 @@ export default function Culta() {
 
   const W = 640, H = 170
   const pt = (i: number, n: number) => `${orden.length > 1 ? 24 + (i / (orden.length - 1)) * (W - 48) : W / 2},${H - 22 - (n / 20) * (H - 44)}`
-  const usado = (tema: string) => ses.find((x) => x.tema.toLowerCase().includes(tema.toLowerCase().slice(0, 18)) || tema.toLowerCase().includes(x.tema.toLowerCase().split(' (')[0]))
+  const usado = (tema: string) => sesionDeTema(ses, tema)
+  const sug = useMemo(() => temaSugerido(s.culta.sesiones, bloqueCulta(), Number(hoyISO().replaceAll('-', ''))), [s.culta.sesiones])
+  const evaluar = (tema: string) => { abrirCoach('explicar', tema); irA('coach') }
 
   return (
     <div className="pagina">
@@ -50,6 +57,15 @@ export default function Culta() {
         <div className="fila"><button className="btn" onClick={() => setForm(nuevo())}>+ Registrar sesión</button><span className="pill mundo">{BLOQUES_CULTA[bloqueCulta()].emoji} Esta semana: {BLOQUES_CULTA[bloqueCulta()].nombre}</span></div>
         <div className="fila"><span className="eyebrow">Jugar con tus temas:</span><button className="pill mundo" onClick={() => jugar('conexion')}>🧵 Hilo entre temas</button><button className="pill mundo" onClick={() => jugar('dosdir')}>↔️ En dos direcciones</button><button className="pill mundo" onClick={() => jugar('manzanitas')}>🍎 Con manzanitas</button></div>
       </header>
+
+      <Sube><Tilt className="tinta pila" style={{ marginBottom: 18, ['--mundo' as any]: 'var(--lila)' }}>
+        <div className="entre"><span className="eyebrow">📚 {toca ? 'Para estudiar hoy' : 'Tu próximo tema'} · {sug.tipo === 'refuerzo' ? 'refuerzo' : sug.tipo === 'nuevo' ? 'tema nuevo' : 'repaso'}</span><span className="pill" style={{ background: BLOQUES_CULTA[sug.bloque as B].color, color: 'var(--tinta)' }}>{BLOQUES_CULTA[sug.bloque as B].emoji} {BLOQUES_CULTA[sug.bloque as B].nombre}</span></div>
+        <h2 className="display" style={{ fontSize: 'clamp(28px, 4.6vw, 52px)' }}>{sug.tema.replace(/\(.*?\)/g, '').trim()}</h2>
+        <p className="chico">{sug.motivo}</p>
+        <div className="enlaces">{enlacesTema(sug.tema, sug.bloque as B).map((e) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener" title={e.para}>{e.emoji} {e.etiqueta}</a>)}</div>
+        <div className="fila"><button className="btn claro" onClick={() => evaluar(sug.tema)}>🧠 Explicarlo y que me evalúe</button><button className="btn linea s" style={{ color: 'var(--crema)', boxShadow: 'inset 0 0 0 1.5px rgba(236,250,241,.4)' }} onClick={() => setForm({ ...nuevo(), bloque: sug.bloque, tema: sug.tema })}>+ Registrar sesión</button></div>
+        <p className="porque" style={{ borderColor: 'var(--lima)', color: 'rgba(236,250,241,.75)' }}>Los enlaces son búsquedas dirigidas al tema: tú eliges la fuente y la verificas. Plan: panorama (5 min) → una fuente más (10 min) → explicarlo sin mirar.</p>
+      </Tilt></Sube>
 
       <div className="bento">
         <Sube className="c5"><Tilt className="color pila" style={{ height: '100%' }}>
@@ -95,6 +111,7 @@ export default function Culta() {
                 <div className="fila">
                   {['En progreso', 'Consolidado'].map((e) => <button key={e} className="pill" aria-pressed={x.estado === e} onClick={() => s.editar('culta.sesiones', x.id, { estado: e })}>{e}</button>)}
                   {(['d2', 'd7', 'd21'] as const).map((k) => <button key={k} className="pill borde" aria-pressed={!!x.repasos?.[k]} onClick={() => s.editar('culta.sesiones', x.id, { repasos: { ...x.repasos, [k]: !x.repasos?.[k] } })}>{k.toUpperCase()}</button>)}
+                  <button className="pill borde" onClick={() => setEstudiar({ tema: x.tema, bloque: x.bloque })}>🔗 Repasar</button>
                   <button className="pill borde" onClick={() => confirm('¿Quitar esta sesión?') && s.quitar('culta.sesiones', x.id)} aria-label="Quitar sesión">✕</button>
                 </div>
               </div></Sube>
@@ -122,9 +139,10 @@ export default function Culta() {
               <Sube key={c.nombre} className="c6" d={(i % 2) * 0.05}><div className="card pila-s" style={{ height: '100%' }}>
                 <div className="entre"><span className="h3">{c.nombre}</span><span className="pill borde">{c.temas.filter((t: string) => usado(t)).length}/{c.temas.length}</span></div>
                 {c.temas.map((t: string) => { const u = usado(t); return (
-                  <button key={t} className="item chico" style={{ textAlign: 'left', background: u ? BLOQUES_CULTA[bloque].color : undefined }} onClick={() => setForm({ ...nuevo(), bloque, tema: t })}>
-                    <span className="entre"><span>{t}</span>{u ? <b>{u.nota}</b> : <span className="suave">+</span>}</span>
-                  </button>) })}
+                  <div key={t} className="item chico" style={{ background: u ? BLOQUES_CULTA[bloque].color : undefined, gridTemplateColumns: '1fr auto', alignItems: 'center' }}>
+                    <button style={{ textAlign: 'left' }} onClick={() => setForm({ ...nuevo(), bloque, tema: t })}><span className="entre"><span>{t}</span>{u ? <b>{u.nota}</b> : <span className="suave">+</span>}</span></button>
+                    <button className="pill" onClick={() => setEstudiar({ tema: t, bloque })} aria-label={`Estudiar: ${t}`}>🔗 Estudiar</button>
+                  </div>) })}
               </div></Sube>
             ))}
           </div>
@@ -136,6 +154,16 @@ export default function Culta() {
           {s.culta.fuentes.length ? s.culta.fuentes.map((f: any) => <div key={f.id} className="card pila-s" style={{ padding: 16 }}><div className="fila"><span className="pill mundo">{f.bloque}</span><b>{f.tema}</b></div><p className="chico" style={{ whiteSpace: 'pre-line' }}>{f.ref}</p></div>) : <Vacio>Las referencias APA que registres aparecerán aquí.</Vacio>}
         </div>
       )}
+
+      <Hoja abierta={!!estudiar} cerrar={() => setEstudiar(null)} titulo="Estudiar este tema">
+        {estudiar && <div className="pila">
+          <h3 className="h3">{estudiar.tema}</h3>
+          <div className="enlaces">{enlacesTema(estudiar.tema, estudiar.bloque).map((e) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener"><span>{e.emoji} {e.etiqueta}</span></a>)}</div>
+          <ol className="pila-s" style={{ margin: 0, paddingLeft: 18 }}>{PASOS_ESTUDIO.map((p) => <li key={p.n} className="chico"><b>{p.t}.</b> {p.d}</li>)}</ol>
+          <div className="fila"><button className="btn" onClick={() => { const t = estudiar.tema; setEstudiar(null); evaluar(t) }}>🧠 Explicarlo y evaluar</button><button className="btn linea s" onClick={() => { setForm({ ...nuevo(), bloque: estudiar.bloque, tema: estudiar.tema }); setEstudiar(null) }}>+ Registrar sesión</button></div>
+          <p className="porque">Enlaces de búsqueda: elige tú la fuente y verifícala. Para la referencia APA, pídele a Claude que te la arme.</p>
+        </div>}
+      </Hoja>
 
       <Hoja abierta={!!form} cerrar={() => setForm(null)} titulo="Registrar sesión">
         {form && <div className="pila">

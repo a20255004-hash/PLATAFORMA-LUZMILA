@@ -2,6 +2,9 @@ import { lazy, Suspense, useMemo, useState } from 'react'
 import { irA } from '../App'
 import { jugar } from '../components/Juegos'
 import { JUEGOS } from '../data/juegos'
+import { LETRAS } from '../data/letras'
+import { planDeHoy } from '../lib/cerebro'
+import { useCoach } from '../lib/coachEstado'
 import { Anillo, Barra, Cuenta, decir, DeDonde, Sello, sinMovimiento, Sube, Tilt, Titulo3D } from '../components/ui'
 import { BLOQUES_CULTA, FRASES_HOY, MUNDOS } from '../data/estructura'
 import { bloqueCulta, diaProyecto, hoyISO, larga, mesProyecto, queToca, semanaCulta, sumar } from '../lib/fechas'
@@ -38,6 +41,9 @@ export default function Hoy() {
   const evid = evidencias.length ? evidencias[semilla % evidencias.length] : null
   const chip = s.chips.length ? s.chips[(semilla * 7) % s.chips.length] : null
   const reto = JUEGOS[semilla % JUEGOS.length]
+  const plan = useMemo(() => planDeHoy(s), [s.checkins, s.culta.sesiones, s.voz, s.ajustes.reingreso, s.evaluaciones, s.zorro.bitacora, hoy])
+  const abrirCoach = useCoach((x) => x.abrir)
+  const hacer = (p: any) => { if (p.ir.tipo === 'juego') jugar(p.ir.juego); else if (p.ir.tipo === 'coach') { abrirCoach(p.ir.modo, p.ir.tema || ''); irA('coach') } else irA(p.ir.ruta) }
   const repasos = repasosPendientes(s.culta.sesiones).length + repasosPendientes(s.voz.palabras).length
 
   const marcar = (k: 'manana' | 'comida' | 'noche') => {
@@ -50,7 +56,7 @@ export default function Hoy() {
   return (
     <div className="pagina">
       <section className="hero">
-        {sinMovimiento() ? <div className="hero-plano"><Titulo3D texto={s.perfil.nombre} /></div> : <Suspense fallback={<div className="hero-plano"><Titulo3D texto={s.perfil.nombre} /></div>}><Hero3D fotos={fotos} nombre={s.perfil.nombre} /></Suspense>}
+        {sinMovimiento() ? <div className="hero-plano"><Titulo3D texto={s.perfil.nombre} nombre /></div> : <Suspense fallback={<div className="hero-plano"><Titulo3D texto={s.perfil.nombre} nombre /></div>}><Hero3D fotos={fotos} nombre={s.perfil.nombre} letra={(s.ajustes as any).letraNombre || 'montserrat'} /></Suspense>}
         <div className="hero-txt">
           <div className="entre" style={{ alignItems: 'start' }}>
             <div className="pila-s">
@@ -65,7 +71,7 @@ export default function Hoy() {
               <div className="h3">{niv.actual.emoji} {niv.actual.nombre}</div>
               <div className="chico suave"><Cuenta n={xp.total} /> XP{niv.siguiente && <> · faltan {niv.faltan} para {niv.siguiente.emoji}</>}</div>
             </div>
-            <span className="pill borde chico" style={{ background: 'rgba(255,255,255,.7)' }}>↔ arrastra tu nombre</span>
+            <div className="fila"><button className="pill" style={{ background: 'rgba(255,255,255,.85)' }} aria-label="Cambiar la letra de tu nombre" onClick={() => { const i = LETRAS.findIndex((l) => l.id === ((s.ajustes as any).letraNombre || 'montserrat')); s.poner('ajustes.letraNombre', LETRAS[(i + 1) % LETRAS.length].id) }}>Aa · cambiar letra</button><span className="pill borde chico" style={{ background: 'rgba(255,255,255,.7)' }}>↔ arrastra tu nombre</span></div>
           </div>
         </div>
       </section>
@@ -98,6 +104,18 @@ export default function Hoy() {
       <div className="cinta" aria-hidden="true"><div>{[...FRASES_HOY, ...FRASES_HOY].map((t, i) => <span key={i}>{t} <i>✦</i></span>)}</div></div>
 
       <div className="bento" style={{ marginTop: 18 }}>
+        {s.cargado && <Sube className="c12">
+          <Tilt className="tinta pila" style={{ ['--mundo' as any]: 'var(--lima)' }}>
+            <div className="entre"><span className="eyebrow">🧠 Tu plan de hoy · armado con tus datos</span><button className="pill" onClick={() => irA('coach')}>Abrir Coach →</button></div>
+            <div className="plan">{plan.pasos.map((p, i) => (
+              <button key={p.id} className="paso" onClick={() => hacer(p)}>
+                <span className="n">{i + 1}</span><span className="e" aria-hidden="true">{p.emoji}</span>
+                <span className="pila-s"><b>{p.titulo}</b><span className="chico">{p.detalle}</span><span className="chico por">Por qué: {p.por}</span></span>
+              </button>
+            ))}</div>
+            {plan.tema && <div className="pila-s"><span className="eyebrow">Para estudiar hoy · enlaces</span><div className="enlaces">{plan.tema.enlaces.map((e: any) => <a key={e.etiqueta} className="enlace" href={e.url} target="_blank" rel="noreferrer noopener" title={e.para}>{e.emoji} {e.etiqueta}</a>)}</div></div>}
+          </Tilt>
+        </Sube>}
         <Sube className="c12">
           <Tilt className="color entre" style={{ ['--mundo' as any]: reto.color, flexWrap: 'wrap' }}>
             <div className="fila" style={{ gap: 16, flexWrap: 'nowrap' }}><span className="flota" style={{ fontSize: 54 }} aria-hidden="true">{reto.emoji}</span><div className="pila-s"><span className="eyebrow">Reto de hoy · {reto.seg ? reto.seg + ' segundos' : 'sin reloj'}</span><h2 className="h2">{reto.nombre}</h2><span className="chico">{reto.desc}</span></div></div>

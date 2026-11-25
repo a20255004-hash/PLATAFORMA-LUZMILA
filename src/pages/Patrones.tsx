@@ -1,6 +1,7 @@
 import { irA } from '../App'
 import { Barra, DeDonde, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import { BLOQUES_CULTA, DIMENSIONES, PILARES_ZORRO, RUBRICA } from '../data/estructura'
+import { tendencia } from '../lib/cerebro'
 import { promedio, useDatos } from '../store'
 
 export default function Patrones() {
@@ -22,6 +23,12 @@ export default function Patrones() {
   const causales = s.voz.frases.filter((x) => ['porque', 'ya que', 'dado que', 'de modo que'].includes(x.conector)).length
   const dimMenos = DIMENSIONES.slice(0, 5).map((d) => ({ d, n: s.expediente.filter((e) => e.dimension === d).length })).sort((a, b) => a.n - b.n)[0]
   const tiposDist = [...new Set(s.distorsiones.map((d) => d.tipo))].map((t) => ({ t, n: s.distorsiones.filter((d) => d.tipo === t).length })).sort((a, b) => b.n - a.n)
+
+  const evs = s.evaluaciones || []
+  const tend = tendencia(evs)
+  const porCrit = new Map<string, number[]>()
+  evs.forEach((e: any) => (e.criterios || []).forEach((c: any) => porCrit.set(c.titulo, [...(porCrit.get(c.titulo) || []), c.max ? c.pts / c.max : 0])))
+  const critProm = [...porCrit.entries()].map(([t, v]) => ({ t, v: v.reduce((a, b) => a + b, 0) / v.length, n: v.length })).sort((a, b) => a.v - b.v)
 
   // Una sola sugerencia a la vez (dispersión histórica: máximo foco).
   const sug = s.ajustes.reingreso
@@ -53,6 +60,11 @@ export default function Patrones() {
       </Tilt></Sube>
 
       <div className="bento" style={{ marginTop: 18 }}>
+        <Sube className="c12"><div className="card pila"><div className="entre"><span className="eyebrow">🧠 Lo que dicen tus evaluaciones de escritura ({evs.length})</span><button className="pill" onClick={() => irA('coach')}>Evaluar algo →</button></div>
+          {evs.length ? <><p>{tend.texto}</p>
+            <div className="bento">{critProm.slice(0, 6).map((c) => <div key={c.t} className="c4 pila-s"><div className="entre chico"><span>{c.t}</span><b className="mono">{Math.round(c.v * 100)}%</b></div><Barra v={c.v} mundo /></div>)}</div>
+            <p className="porque">Cada barra es tu promedio en ese criterio, de todas las evaluaciones guardadas. La más baja es lo que más te conviene practicar.</p></>
+            : <Vacio>Todavía no hay evaluaciones guardadas. En Coach pegas lo que escribes, te digo qué está sólido y qué falta, y aquí queda tu progreso.</Vacio>}</div></Sube>
         <Sube className="c6"><div className="card pila" style={{ height: '100%' }}><span className="eyebrow">🔋 Rituales · {n} días con registro</span>
           {n ? <>{rit.map((r) => <div key={r.k} className="pila-s"><div className="entre chico"><span>{r.t}</span><b className="mono">{r.si}/{n}</b></div><Barra v={r.si / n} mundo /></div>)}
             <p className="chico">El que más pega: <b>{fuerte.t}</b>. El que más cuesta: <b>{flojo.t}</b>.</p></> : <Vacio>Sin check-ins todavía.</Vacio>}

@@ -25,11 +25,12 @@ export const vacio = () => ({
   alterEgo: [] as any[],
   disfrute: [] as any[],
   juegos: [] as any[],
+  evaluaciones: [] as any[],
   patrones: { fortalezas: [] as any[], debiles: [] as any[] },
   fasesAbiertas: [] as number[],
   fasesEstado: {} as Record<string, string>,
   modulos: { culta: true, zorro: true, voz: true, extra: [] as any[] },
-  ajustes: { reingreso: true, movimiento: 'auto' as 'auto' | 'suave' },
+  ajustes: { reingreso: true, movimiento: 'auto' as 'auto' | 'suave', letraNombre: 'montserrat', letraTitulos: 'condensada' },
 })
 export type Datos = ReturnType<typeof vacio>
 

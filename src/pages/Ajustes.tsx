@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Campo, decir, Sube, Titulo3D } from '../components/ui'
+import { LETRAS, letraDe } from '../data/letras'
 import { hoyISO } from '../lib/fechas'
 import { exportar, useDatos } from '../store'
 import { leerArchivo } from './Hoy'
@@ -33,6 +34,8 @@ export default function Ajustes() {
         <Sube className="c5" d={0.05}><div className="card pila" style={{ height: '100%' }}><h2 className="h2">Preferencias</h2>
           <Campo label="¿Cómo te llamo?"><input value={s.perfil.nombre} onChange={(e) => s.poner('perfil.nombre', e.target.value.slice(0, 12) || 'Luzmila')} /></Campo>
           <Campo label="Tu rincón (separado por comas)"><input value={s.perfil.rincon.join(', ')} onChange={(e) => s.poner('perfil.rincon', e.target.value.split(',').map((x) => x.trim()).filter(Boolean))} /></Campo>
+          <div className="pila-s"><span className="eyebrow">Letra de tu nombre</span><div className="letras">{LETRAS.map((l) => <button key={l.id} style={{ fontFamily: l.css, fontWeight: l.peso }} aria-pressed={((s.ajustes as any).letraNombre || 'montserrat') === l.id} onClick={() => s.poner('ajustes.letraNombre', l.id)}>Luzmila</button>)}</div></div>
+          <div className="pila-s"><span className="eyebrow">Letra de los títulos</span><div className="letras">{LETRAS.map((l) => <button key={l.id} style={{ fontFamily: l.css, fontWeight: l.peso, textTransform: 'uppercase', fontSize: 16 }} aria-pressed={((s.ajustes as any).letraTitulos || 'condensada') === l.id} onClick={() => s.poner('ajustes.letraTitulos', l.id)}>{letraDe(l.id).nombre}</button>)}</div></div>
           <div className="fila"><button className="pill" aria-pressed={s.ajustes.reingreso} onClick={() => s.poner('ajustes.reingreso', !s.ajustes.reingreso)}>🚪 Modo Reingreso {s.ajustes.reingreso ? 'activo' : 'apagado'}</button></div>
           <p className="chico suave">Las animaciones y el 3D se reducen solos si tu dispositivo tiene activado “reducir movimiento”.</p>
         </div></Sube>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { jugar } from '../components/Juegos'
 import { Anillo, Campo, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import { CONECTORES, PILARES_VOZ, SEMANA_VOZ } from '../data/estructura'
+import { evaluarArgumento } from '../lib/cerebro'
 import { bonita, hoyISO } from '../lib/fechas'
 import { dominioVoz, repasosPendientes, useDatos } from '../store'
 
@@ -11,6 +12,7 @@ export default function Voz() {
   const [tab, setTab] = useState<'p1' | 'p3' | 'p4' | 'p5'>('p1')
   const [hoja, setHoja] = useState<null | 'palabra' | 'arg'>(null)
   const [f, setF] = useState<any>({})
+  const [evA, setEvA] = useState<any>(null)
   const pend = repasosPendientes(s.voz.palabras)
   const diaSem = new Date().getDay()
 
@@ -118,7 +120,10 @@ export default function Voz() {
         <Campo label="Evidencia" ayuda="El dato o hecho que la apoya. Una sola, no mezcles dos."><textarea value={f.evidencia || ''} onChange={(e) => setF({ ...f, evidencia: e.target.value })} /></Campo>
         <Campo label="Garantía" ayuda="La regla que conecta la evidencia con la afirmación: “esto importa porque…”"><textarea value={f.garantia || ''} onChange={(e) => setF({ ...f, garantia: e.target.value })} /></Campo>
         <Campo label="Postura contraria, en su mejor versión (opcional)"><textarea value={f.contraria || ''} onChange={(e) => setF({ ...f, contraria: e.target.value })} /></Campo>
-        <button className="btn" onClick={guardarArg}>Guardar</button>
+        <div className="fila"><button className="btn linea" onClick={() => setEvA(evaluarArgumento({ afirmacion: f.afirmacion || '', evidencia: f.evidencia || '', garantia: f.garantia || '', contraria: f.contraria || '' }))}>🧠 Evaluar antes de guardar</button><button className="btn" onClick={guardarArg}>Guardar</button></div>
+        {evA && <div className="item pila-s"><div className="entre"><span className="eyebrow">Tu argumento</span><b className="num" style={{ fontSize: 30 }}>{evA.puntaje}<span className="chico">/100</span></b></div>
+          {evA.criterios.map((c: any) => <div key={c.id} className="mini"><span className={`pto ${c.estado}`} /><span><b>{c.titulo}</b> <span className="suave">· {c.texto}</span></span><b className="mono">{c.pts}/{c.max}</b></div>)}
+          {evA.preguntas[0] && <p className="porque">Para pensar: {evA.preguntas[0]}</p>}</div>}
       </Hoja>
     </div>
   )

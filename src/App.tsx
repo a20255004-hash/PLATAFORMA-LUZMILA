@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { Component, lazy, ReactNode, Suspense, useEffect, useRef, useState } from 'react'
 import { Arcade } from './components/Juegos'
+import Decor from './components/Decor'
+import { letraDe } from './data/letras'
 import { Avisos, sinMovimiento } from './components/ui'
 import { MUNDOS, MundoId, ORDEN } from './data/estructura'
 import { useDatos } from './store'
@@ -8,6 +10,7 @@ import Hoy from './pages/Hoy'
 
 const PAGINAS: Record<MundoId, any> = {
   hoy: Hoy,
+  coach: lazy(() => import('./pages/Coach')),
   retos: lazy(() => import('./pages/Retos')),
   mapa: lazy(() => import('./pages/Mapa')),
   culta: lazy(() => import('./pages/Culta')),
@@ -39,6 +42,21 @@ export default function App() {
   const [telon, setTelon] = useState<{ m: MundoId; x: number; y: number; k: number } | null>(null)
   const mods = useDatos((s) => s.modulos)
   const origen = useRef({ x: 0, y: 0 })
+  const letraT = useDatos((s) => (s.ajustes as any).letraTitulos)
+  const letraN = useDatos((s) => (s.ajustes as any).letraNombre)
+
+  useEffect(() => { document.documentElement.style.setProperty('--display', letraDe(letraT || 'condensada').css) }, [letraT])
+  useEffect(() => { document.documentElement.style.setProperty('--nombre-font', letraDe(letraN).css) }, [letraN])
+  // Brillo que sigue al cursor sobre las tarjetas
+  useEffect(() => {
+    const m = (e: PointerEvent) => {
+      const c = (e.target as HTMLElement)?.closest?.('.card') as HTMLElement | null
+      if (!c) return
+      const r = c.getBoundingClientRect()
+      c.style.setProperty('--mx', e.clientX - r.left + 'px'); c.style.setProperty('--my', e.clientY - r.top + 'px')
+    }
+    window.addEventListener('pointermove', m, { passive: true }); return () => window.removeEventListener('pointermove', m)
+  }, [])
 
   useEffect(() => { const h = () => setRuta(leerRuta()); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h) }, [])
   useEffect(() => { document.documentElement.style.setProperty('--mundo', MUNDOS[ruta].color); window.scrollTo({ top: 0 }) }, [ruta])
@@ -55,12 +73,13 @@ export default function App() {
   }
 
   const visibles = ORDEN.filter((m) => (m === 'culta' || m === 'zorro' || m === 'voz' ? (mods as any)[m] !== false : true))
-  const rapidos = (['hoy', 'retos', 'culta', 'zorro', 'voz'] as MundoId[]).filter((m) => visibles.includes(m))
+  const rapidos = (['hoy', 'coach', 'culta', 'zorro', 'voz'] as MundoId[]).filter((m) => visibles.includes(m))
   const Pag = PAGINAS[ruta]
 
   return (
     <Red>
       <a href="#contenido" className="sr">Saltar al contenido</a>
+      <Decor />
       <Avisos />
       <Arcade />
       <nav className="dock" aria-label="Secciones">
