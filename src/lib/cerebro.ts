@@ -264,7 +264,7 @@ export function tendencia(evs: any[]) {
 import { BLOQUES_CULTA } from '../data/estructura'
 import { bloqueCulta, hoyISO, queToca } from './fechas'
 import { enlacesTema, temaSugerido } from './recursos'
-import { puntosDia, repasosPendientes, siguientePilar } from '../store'
+import { proximasFechas, puntosDia, repasosPendientes, siguientePilar } from '../store'
 
 export type Paso = { id: string; emoji: string; titulo: string; detalle: string; por: string; ir: { tipo: 'ruta'; ruta: string } | { tipo: 'juego'; juego: string } | { tipo: 'coach'; modo: Evaluacion['modo']; tema?: string } }
 
@@ -273,6 +273,8 @@ export function planDeHoy(s: any): { pasos: Paso[]; tema?: ReturnType<typeof tem
   const reingreso = !!s.ajustes?.reingreso
   let tema: any
   if (puntosDia(s.checkins[hoy] || {}) === 0) pasos.push({ id: 'checkin', emoji: '✅', titulo: 'Check-in de 10 segundos', detalle: 'Marca lo que ya hiciste hoy. Con eso el día queda vivo.', por: 'Es lo que sostiene la racha de 48 h; todo lo demás es bonus.', ir: { tipo: 'ruta', ruta: 'hoy' } })
+  const pf = proximasFechas(s)[0]
+  if (pf && pf.faltan >= 0 && pf.faltan <= 3) pasos.push({ id: 'fecha', emoji: '📌', titulo: `${pf.titulo} · ${pf.faltan === 0 ? 'es hoy' : pf.faltan === 1 ? 'mañana' : `en ${pf.faltan} días`}`, detalle: pf.nota ? `Primer paso: ${pf.nota}` : 'Un paso pequeño hoy, aunque sean 10 minutos.', por: 'Tu mejor talento es cumplir cuando hay fecha: aquí la fecha manda.', ir: { tipo: 'ruta', ruta: 'agenda' } })
   if (reingreso) return { pasos: pasos.length ? pasos : [{ id: 'respira', emoji: '🌱', titulo: 'Hoy basta con lo mínimo', detalle: 'Estás en Reingreso: lo extra es opcional.', por: 'Protocolo de tu propio proyecto.', ir: { tipo: 'ruta', ruta: 'calendario' } }] }
   if (toca === 'culta') {
     tema = temaSugerido(s.culta.sesiones, bloqueCulta())

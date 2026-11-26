@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import HerramientaFase from '../components/HerramientaFase'
 import { decir, Hoja, Sube, Titulo3D } from '../components/ui'
 import { Fase, FASES } from '../data/estructura'
 import { mesProyecto } from '../lib/fechas'
@@ -13,7 +14,7 @@ export default function Mapa() {
   const xp = xpLuzmila(s).partes
 
   const estado = (f: Fase) => s.fasesEstado[f.id] || (f.id <= 4 ? 'En pausa' : 'Aún no empieza')
-  const registros = (id: number) => (id === 1 ? Object.keys(s.checkins).length : id === 2 ? s.distorsiones.length : id === 3 ? s.expediente.filter((e) => !e.historial).length : id === 4 ? s.metas.length : id === 5 ? s.alterEgo.length : id === 7 ? s.disfrute.length : 0)
+  const registros = (id: number) => (id === 1 ? Object.keys(s.checkins).length : id === 2 ? s.distorsiones.length : id === 3 ? s.expediente.filter((e) => !e.historial).length : id === 4 ? s.metas.length : id === 5 ? s.alterEgo.length : id === 7 ? s.disfrute.length : (s.fasesReg || []).filter((r: any) => r.fase === id).length)
   const clase = (f: Fase) => { const e = estado(f); return e === 'Viva' || e === 'Hecha' ? 'viva' : e === 'En pausa' ? 'pausa' : 'cerrada' }
   const depsOk = (f: Fase) => f.deps.every((d) => ['Viva', 'Hecha', 'En pausa'].includes(estado(FASES.find((x) => x.id === d)!)))
   const cerrada = (f: Fase) => f.optIn && !s.fasesAbiertas.includes(f.id)
@@ -69,6 +70,7 @@ export default function Mapa() {
               {abierta.entregables.length ? <div className="lista">{abierta.entregables.map((e) => <div key={e} className="item blanco chico">◦ {e}</div>)}</div> : <div className="vacio chico">Por definir contigo. Hoy solo existe su propósito.</div>}
             </div>
             {abierta.nota && <p className="porque">{abierta.nota}</p>}
+            <div className="pila-s"><span className="eyebrow">🧰 Herramienta de esta fase</span><HerramientaFase fase={abierta.id} /></div>
             <div className="pila-s"><span className="eyebrow">Estado (lo decides tú)</span>
               <div className="fila">{ESTADOS.map((e) => <button key={e} className="pill" aria-pressed={estado(abierta) === e} onClick={() => s.poner('fasesEstado', { ...s.fasesEstado, [abierta.id]: e })}>{e}</button>)}</div>
             </div>

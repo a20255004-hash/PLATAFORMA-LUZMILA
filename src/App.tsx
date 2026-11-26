@@ -3,6 +3,7 @@ import { Component, lazy, ReactNode, Suspense, useEffect, useRef, useState } fro
 import { Arcade } from './components/Juegos'
 import Decor from './components/Decor'
 import QuizModal from './components/QuizModal'
+import Mascota from './components/Mascota'
 import { letraDe } from './data/letras'
 import { Avisos, sinMovimiento } from './components/ui'
 import { MUNDOS, MundoId, ORDEN } from './data/estructura'
@@ -11,7 +12,9 @@ import Hoy from './pages/Hoy'
 
 const PAGINAS: Record<MundoId, any> = {
   hoy: Hoy,
+  agenda: lazy(() => import('./pages/Agenda')),
   coach: lazy(() => import('./pages/Coach')),
+  puente: lazy(() => import('./pages/Puente')),
   retos: lazy(() => import('./pages/Retos')),
   mapa: lazy(() => import('./pages/Mapa')),
   culta: lazy(() => import('./pages/Culta')),
@@ -84,6 +87,7 @@ export default function App() {
       <Avisos />
       <Arcade />
       <QuizModal />
+      <Mascota />
       <nav className="dock" aria-label="Secciones">
         {rapidos.map((m) => (
           <button key={m} onClick={() => irA(m)} aria-current={ruta === m ? 'page' : undefined} aria-label={MUNDOS[m].nombre} style={{ ['--mundo' as any]: MUNDOS[m].color }}>

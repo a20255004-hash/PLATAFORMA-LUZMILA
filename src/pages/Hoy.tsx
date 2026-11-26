@@ -4,6 +4,10 @@ import { jugar } from '../components/Juegos'
 import { JUEGOS } from '../data/juegos'
 import { LETRAS } from '../data/letras'
 import { planDeHoy } from '../lib/cerebro'
+import { mascotaDice } from '../components/Mascota'
+import { TarjetaAncla } from '../components/Seguimiento'
+import { bonita } from '../lib/fechas'
+import { proximasFechas } from '../store'
 import FichaTema from '../components/FichaTema'
 import { useCoach, useCultaTab } from '../lib/coachEstado'
 import { Anillo, Barra, Cuenta, decir, DeDonde, Sello, sinMovimiento, Sube, Tilt, Titulo3D } from '../components/ui'
@@ -50,12 +54,15 @@ export default function Hoy() {
   const marcar = (k: 'manana' | 'comida' | 'noche') => {
     const era = !!c[k]
     const { retomo } = s.checkin(hoy, { [k]: !era })
+    if (retomo) mascotaDice('¡Volviste! Y volver vale +3: más que no fallar nunca 🛟', 'fiesta')
+    else if (!era && puntosDia({ ...c, [k]: true }) === 3) mascotaDice('¡Tres de tres hoy! Así se ve un día vivo 🌟', 'fiesta')
+    else if (!era) mascotaDice(k === 'noche' ? 'Celular afuera, descanso adentro. Buenas noches, corazón ✈️' : k === 'comida' ? 'Comida ancla, hecha. Así se sostiene el día 🍽️' : '¡Modo Poderosa activado! Buen comienzo 🌅', 'feliz')
     if (retomo) decir(<>Volviste. <b>+3 por retomar</b> — vale más que no fallar nunca 🛟</>, true)
     else if (!era) decir(<><b>+1</b> · {k === 'noche' ? 'Zombie no decide. Decide Luzmila.' : k === 'comida' ? 'Comida ancla, hecha.' : 'Modo Poderosa, activado.'}</>, puntosDia({ ...c, [k]: true }) === 3)
   }
 
   return (
-    <div className="pagina">
+    <div className={`pagina ${s.ajustes.minimo ? 'hoy-min' : ''}`}>
       <section className="hero">
         {sinMovimiento() ? <div className="hero-plano"><Titulo3D texto={s.perfil.nombre} nombre /></div> : <Suspense fallback={<div className="hero-plano"><Titulo3D texto={s.perfil.nombre} nombre /></div>}><Hero3D fotos={fotos} nombre={s.perfil.nombre} letra={(s.ajustes as any).letraNombre || 'montserrat'} /></Suspense>}
         <div className="hero-txt">
@@ -102,7 +109,7 @@ export default function Hoy() {
         </Sube>
       )}
 
-      <div className="cinta" aria-hidden="true"><div>{[...FRASES_HOY, ...FRASES_HOY].map((t, i) => <span key={i}>{t} <i>✦</i></span>)}</div></div>
+      <div className="cinta extra" aria-hidden="true"><div>{[...FRASES_HOY, ...FRASES_HOY].map((t, i) => <span key={i}>{t} <i>✦</i></span>)}</div></div>
 
       <div className="bento" style={{ marginTop: 18 }}>
         {s.cargado && <Sube className="c12">
@@ -118,7 +125,12 @@ export default function Hoy() {
             {plan.tema && <div><button className="pill" onClick={() => { useCultaTab.getState().poner('ruleta'); irA('culta') }}>🎡 No me late este tema: girar la ruleta</button></div>}
           </Tilt>
         </Sube>}
-        <Sube className="c12">
+        {s.cargado && <Sube className="c7"><div className="card pila" style={{ height: '100%' }}>
+          <div className="entre"><span className="eyebrow">📌 Próximas fechas</span><button className="pill" onClick={() => irA('agenda')}>Agenda →</button></div>
+          {proximasFechas(s).slice(0, 3).length ? proximasFechas(s).slice(0, 3).map((x) => <div key={x.id} className="item chico" style={{ background: x.faltan <= 1 ? 'var(--mostaza)' : undefined }}><b>{x.titulo}</b><span className="suave">{bonita(x.fecha)} · {x.faltan < 0 ? `pasó hace ${-x.faltan} d · ¿la cerraste?` : x.faltan === 0 ? 'es hoy' : x.faltan === 1 ? 'mañana' : `en ${x.faltan} días`}</span></div>) : <p className="chico suave">Sin fechas. Agrega la próxima entrega o examen en la Agenda: tú cumples cuando hay fecha.</p>}
+        </div></Sube>}
+        {s.cargado && <Sube className="c5" d={0.06}><TarjetaAncla compacta /></Sube>}
+        <Sube className="c12 extra">
           <Tilt className="color entre" style={{ ['--mundo' as any]: reto.color, flexWrap: 'wrap' }}>
             <div className="fila" style={{ gap: 16, flexWrap: 'nowrap' }}><span className="flota" style={{ fontSize: 54 }} aria-hidden="true">{reto.emoji}</span><div className="pila-s"><span className="eyebrow">Reto de hoy · {reto.seg ? reto.seg + ' segundos' : 'sin reloj'}</span><h2 className="h2">{reto.nombre}</h2><span className="chico">{reto.desc}</span></div></div>
             <div className="fila"><button className="btn" onClick={() => jugar(reto.id)}>▶ Jugar ahora</button><button className="btn claro s" onClick={() => irA('retos')}>Ver los {JUEGOS.length} retos</button></div>
@@ -145,7 +157,7 @@ export default function Hoy() {
           </Tilt>
         </Sube>
 
-        <Sube className="c5" d={0.08}>
+        <Sube className="c5 extra" d={0.08}>
           <Tilt className="pila" style={{ height: '100%' }}>
             <span className="eyebrow">Luzmila Level Up</span>
             <div className="fila" style={{ gap: 18 }}>
@@ -160,7 +172,7 @@ export default function Hoy() {
           </Tilt>
         </Sube>
 
-        <Sube className="c5">
+        <Sube className="c5 extra">
           <Tilt className="color pila" style={{ height: '100%', ['--mundo' as any]: toca === 'zorro' ? 'var(--mandarina)' : 'var(--lila)' }}>
             <span className="eyebrow">Hoy toca</span>
             {s.ajustes.reingreso ? (
@@ -175,7 +187,7 @@ export default function Hoy() {
           </Tilt>
         </Sube>
 
-        <Sube className="c7" d={0.08}>
+        <Sube className="c7 extra" d={0.08}>
           <Tilt className="color pila" style={{ height: '100%', ['--mundo' as any]: 'var(--rosa)' }}>
             <div className="entre"><span className="eyebrow">Esto también cuenta</span><button className="btn claro s" onClick={() => irA('expediente')}>Abrir Expediente</button></div>
             {evid ? (
@@ -191,7 +203,7 @@ export default function Hoy() {
           { m: 'zorro', xp: zorro.total, t: zorro.nombre || `Nivel ${zorro.nivel}`, sub: `faltan ${zorro.faltan} XP`, p: zorro.progreso, extra: `${s.zorro.bitacora.length} registros` },
           { m: 'voz', xp: voz.dominadas, t: `Nivel ${voz.nivel} · por dominio`, sub: 'palabras dominadas', p: voz.progreso, extra: `${s.voz.semanasCompletas} semanas completas` },
         ].filter((x) => (s.modulos as any)[x.m] !== false).map((x, i) => (
-          <Sube className="c4" d={i * 0.07} key={x.m}>
+          <Sube className="c4 extra" d={i * 0.07} key={x.m}>
             <Tilt as="button" className="pila" style={{ width: '100%', textAlign: 'left', height: '100%' }} onClick={() => irA(x.m as any)}>
               <div className="entre"><span className="pill mundo" style={{ ['--mundo' as any]: (MUNDOS as any)[x.m].color }}>{(MUNDOS as any)[x.m].emoji} {(MUNDOS as any)[x.m].nombre}</span><span className="chico suave">{x.extra}</span></div>
               <div className="fila" style={{ alignItems: 'end' }}><span className="num" style={{ fontSize: 64 }}><Cuenta n={x.xp} /></span><span className="chico suave" style={{ paddingBottom: 8 }}>{x.m === 'voz' ? x.sub : 'XP'}</span></div>
@@ -201,7 +213,7 @@ export default function Hoy() {
           </Sube>
         ))}
 
-        <Sube className="c7">
+        <Sube className="c7 extra">
           <Tilt className="pila" style={{ height: '100%' }}>
             <span className="eyebrow">Chip de bolsillo</span>
             {chip ? <><p className="display" style={{ fontSize: 'clamp(28px, 4.4vw, 48px)' }}>“{chip.chip}”</p><p className="chico suave">Para cuando: {chip.situacion}</p><p className="porque">{chip.porque}</p></> : <p className="display" style={{ fontSize: 40 }}>“{FRASES_HOY[semilla % FRASES_HOY.length]}”</p>}
@@ -209,7 +221,7 @@ export default function Hoy() {
           </Tilt>
         </Sube>
 
-        <Sube className="c5" d={0.08}>
+        <Sube className="c5 extra" d={0.08}>
           <Tilt className="color pila" style={{ height: '100%', ['--mundo' as any]: 'var(--celeste)' }}>
             <span className="eyebrow">Tu rincón</span>
             <div className="fila" style={{ gap: 4 }}>

@@ -27,11 +27,18 @@ export const vacio = () => ({
   juegos: [] as any[],
   evaluaciones: [] as any[],
   quizzes: [] as any[],
+  fechas: [] as any[],
+  agenda: { manana: '07:30', comida: '13:30', noche: '21:30', hoyToca: '18:00', domingo: '19:00', voz: '17:00', activos: { manana: true, comida: true, noche: true, hoyToca: true, domingo: true, voz: false } as Record<string, boolean> },
+  hitos: [] as string[],
+  hitosListos: false,
+  ancla: { nombre: '', inicio: '' },
+  fasesReg: [] as any[],
+  fasesChecks: {} as Record<string, boolean>,
   patrones: { fortalezas: [] as any[], debiles: [] as any[] },
   fasesAbiertas: [] as number[],
   fasesEstado: {} as Record<string, string>,
   modulos: { culta: true, zorro: true, voz: true, extra: [] as any[] },
-  ajustes: { reingreso: true, movimiento: 'auto' as 'auto' | 'suave', letraNombre: 'montserrat', letraTitulos: 'condensada' },
+  ajustes: { reingreso: true, movimiento: 'auto' as 'auto' | 'suave', letraNombre: 'montserrat', letraTitulos: 'condensada', mascotaNombre: 'Atoq', mascotaVisible: true, minimo: false, ultimoRespaldo: '' },
 })
 export type Datos = ReturnType<typeof vacio>
 
@@ -78,7 +85,7 @@ export const useDatos = create<Datos & Acciones>()(
         if (Array.isArray(fotos)) { try { localStorage.setItem(CLAVE_FOTOS, JSON.stringify(fotos)) } catch { /* sin espacio: seguimos sin fotos */ } }
         const base = vacio()
         const mezcla: any = { ...base, ...resto, cargado: true }
-        for (const k of ['perfil', 'culta', 'zorro', 'voz', 'patrones', 'modulos', 'ajustes']) mezcla[k] = { ...(base as any)[k], ...(resto as any)[k] }
+        for (const k of ['perfil', 'culta', 'zorro', 'voz', 'patrones', 'modulos', 'ajustes', 'agenda', 'ancla']) mezcla[k] = { ...(base as any)[k], ...(resto as any)[k] }
         set(mezcla)
       },
       borrarTodo: () => { try { localStorage.removeItem(CLAVE_FOTOS) } catch { /* nada */ } set(vacio()) },
@@ -111,6 +118,7 @@ export const xpLuzmila = (s: Datos) => {
   const f4 = s.metas.filter((m) => m.estado === 'Cumplida').length * 2
   const retomar = s.retomas.length * 3
   const alter = s.alterEgo.length * 2
+  const otras = (s.fasesReg || []).reduce((a: number, r: any) => a + (Number(r.xp) || 0), 0)
   const partes = [
     { nombre: 'Fase 1 · rituales (+1 por cada Sí)', xp: f1 },
     { nombre: 'Fase 2 · distorsiones capturadas (+1)', xp: f2 },
@@ -118,8 +126,9 @@ export const xpLuzmila = (s: Datos) => {
     { nombre: 'Fase 4 · metas cumplidas (+2)', xp: f4 },
     { nombre: 'Retomar después de fallar (+3)', xp: retomar },
     { nombre: 'Alter Ego activado (+2)', xp: alter },
+    { nombre: 'Otras fases con puntos (Cuerpo +2 por sesión)', xp: otras },
   ]
-  return { total: f1 + f2 + f3 + f4 + retomar + alter, partes }
+  return { total: f1 + f2 + f3 + f4 + retomar + alter + otras, partes }
 }
 
 export const nivelDe = (xp: number, tabla: { min: number }[] = NIVELES) => {
@@ -189,3 +198,37 @@ export const repasosPendientes = (items: any[], hoy = hoyISO()) => {
   }
   return out
 }
+
+
+/** Práctica ancla: UNA práctica pequeña sostenida hacia 8 semanas, con la regla de 48 h (dos días seguidos sin marcarla la cortan). */
+export const anclaSemanas = (s: Datos, hasta = hoyISO()) => {
+  if (!s.ancla?.nombre) return null
+  const marcado = (f: string) => !!s.checkins[f]?.ancla
+  let f = hasta
+  if (!marcado(f)) f = sumar(f, -1)
+  let huecos = 0, primero = '', ultimo = '', dias = 0
+  for (let i = 0; i < 400; i++) {
+    if (marcado(f)) { if (!ultimo) ultimo = f; primero = f; dias++; huecos = 0 } else { huecos++; if (huecos >= 2) break }
+    f = sumar(f, -1)
+  }
+  const span = ultimo ? dif(ultimo, primero) + 1 : 0
+  return { dias, span, semanas: Math.floor(span / 7), meta: 8, progreso: Math.min(1, span / 56), hoy: marcado(hasta) }
+}
+
+/** Ciclo de caída y regreso: cuántos días en cero hubo cada vez que paraste y luego volviste (tu definición de éxito: que se acorte). */
+export const ciclo = (s: Datos, hasta = hoyISO()) => {
+  const vivos = Object.keys(s.checkins).filter((f) => vivo(s.checkins[f])).sort()
+  const caidas: { desde: string; hasta: string; vacios: number }[] = []
+  for (let i = 1; i < vivos.length; i++) {
+    const vacios = dif(vivos[i], vivos[i - 1]) - 1
+    if (vacios >= 2) caidas.push({ desde: sumar(vivos[i - 1], 1), hasta: sumar(vivos[i], -1), vacios })
+  }
+  const actual = vivos.length ? Math.max(0, dif(hasta, vivos[vivos.length - 1]) - (vivo(s.checkins[hasta]) ? 0 : 0)) : null
+  const prom = (x: number[]) => (x.length ? x.reduce((a, b) => a + b, 0) / x.length : null)
+  const v = caidas.map((c) => c.vacios)
+  const ult = prom(v.slice(-3)), prev = prom(v.slice(-6, -3))
+  return { caidas, actual, ult, prev, tendencia: ult !== null && prev !== null ? (ult < prev - 0.5 ? 'baja' : ult > prev + 0.5 ? 'sube' : 'igual') : null }
+}
+
+/** Fechas límite ordenadas, con cuenta regresiva amable. */
+export const proximasFechas = (s: Datos, hoy = hoyISO()) => (s.fechas || []).filter((x) => !x.hecha && esISO(x.fecha)).map((x) => ({ ...x, faltan: dif(x.fecha, hoy) })).sort((a, b) => (a.fecha < b.fecha ? -1 : 1))

@@ -11,6 +11,7 @@ export default function Ajustes() {
   const bajar = () => {
     const blob = new Blob([JSON.stringify(exportar(s))], { type: 'application/json' })
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `luzmila-respaldo-${hoyISO()}.json`; a.click(); URL.revokeObjectURL(a.href)
+    s.poner('ajustes.ultimoRespaldo', hoyISO())
     decir('Respaldo descargado. Guárdalo donde solo tú lo veas 🗝️')
   }
   const peso = (() => { try { return Math.round((JSON.stringify(exportar(s)).length / 1024)) } catch { return 0 } })()
@@ -36,6 +37,9 @@ export default function Ajustes() {
           <Campo label="Tu rincón (separado por comas)"><input value={s.perfil.rincon.join(', ')} onChange={(e) => s.poner('perfil.rincon', e.target.value.split(',').map((x) => x.trim()).filter(Boolean))} /></Campo>
           <div className="pila-s"><span className="eyebrow">Letra de tu nombre</span><div className="letras">{LETRAS.map((l) => <button key={l.id} style={{ fontFamily: l.css, fontWeight: l.peso }} aria-pressed={((s.ajustes as any).letraNombre || 'montserrat') === l.id} onClick={() => s.poner('ajustes.letraNombre', l.id)}>Luzmila</button>)}</div></div>
           <div className="pila-s"><span className="eyebrow">Letra de los títulos</span><div className="letras">{LETRAS.map((l) => <button key={l.id} style={{ fontFamily: l.css, fontWeight: l.peso, textTransform: 'uppercase', fontSize: 16 }} aria-pressed={((s.ajustes as any).letraTitulos || 'condensada') === l.id} onClick={() => s.poner('ajustes.letraTitulos', l.id)}>{letraDe(l.id).nombre}</button>)}</div></div>
+          <Campo label="Nombre de tu zorro compañero"><input value={s.ajustes.mascotaNombre} maxLength={14} onChange={(e) => s.poner('ajustes.mascotaNombre', e.target.value || 'Atoq')} /></Campo>
+          <div className="fila"><button className="pill" aria-pressed={s.ajustes.mascotaVisible !== false} onClick={() => s.poner('ajustes.mascotaVisible', s.ajustes.mascotaVisible === false)}>🦊 Mascota {s.ajustes.mascotaVisible !== false ? 'visible' : 'oculta'}</button><button className="pill" aria-pressed={!!s.ajustes.minimo} onClick={() => s.poner('ajustes.minimo', !s.ajustes.minimo)}>🌱 Modo mínimo en Hoy {s.ajustes.minimo ? 'activo' : 'apagado'}</button></div>
+          <p className="chico suave">Modo mínimo: Hoy muestra solo tu plan, el check-in, tu ancla y tus fechas. Todo lo demás sigue en el menú.</p>
           <div className="fila"><button className="pill" aria-pressed={s.ajustes.reingreso} onClick={() => s.poner('ajustes.reingreso', !s.ajustes.reingreso)}>🚪 Modo Reingreso {s.ajustes.reingreso ? 'activo' : 'apagado'}</button></div>
           <p className="chico suave">Las animaciones y el 3D se reducen solos si tu dispositivo tiene activado “reducir movimiento”.</p>
         </div></Sube>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Anillo, Campo, decir, DeDonde, Hoja, Sube, Tilt, Titulo3D, Vacio } from '../components/ui'
 import { INSIGNIAS, NIVELES, PILARES_ZORRO } from '../data/estructura'
 import { bonita, dif, hoyISO, sumar } from '../lib/fechas'
+import { TarjetaAncla, TarjetaCiclo, TarjetaMetas2026 } from '../components/Seguimiento'
 import { nivelDe, puntosDia, useDatos, xpCulta, xpLuzmila, xpZorro } from '../store'
 
 const cuadrante = (m: any) => (m.urgente && m.importante ? 'I · Hacer ya' : !m.urgente && m.importante ? 'II · Planificar' : m.urgente ? 'III · Minimizar' : 'IV · ¿Por qué está aquí?')
@@ -23,7 +24,7 @@ export default function Logros() {
     remate: s.zorro.anecdotas.length >= 3,
     garantia: s.voz.argumentos.filter((a) => a.garantia).length >= 5,
     valentia: s.alterEgo.length >= 4,
-    puente: false,
+    puente: (s.fasesReg || []).some((r: any) => r.fase === 8 && r.seccion === 'vinculo' && r.estado && r.estado !== 'Pendiente'),
   }
   const activas = s.metas.filter((m) => m.estado !== 'Cumplida')
   const misiones = s.misiones.filter((m) => !m.hecha)
@@ -63,6 +64,10 @@ export default function Logros() {
               </Tilt>) })}
           </div>
           <DeDonde titulo="¿Suman Culta, Zorro y Voz a este nivel?">No: hoy son sistemas separados, igual que en tus Excel. Luzmila {xp.total} XP · Culta {xpCulta(s).total} XP · Zorro {xpZorro(s).total} XP. Si quieres unificarlos, es una decisión tuya y se cambia.</DeDonde></div></Sube>
+
+        <Sube className="c5"><TarjetaAncla /></Sube>
+        <Sube className="c7" d={0.05}><TarjetaCiclo /></Sube>
+        <Sube className="c12"><TarjetaMetas2026 /></Sube>
 
         <Sube className="c7"><div className="card pila" style={{ height: '100%' }}><div className="entre"><span className="eyebrow">🎯 Metas activas · {activas.length}/3</span><button className="btn s" onClick={() => { setF({ importante: true }); setHoja('meta') }}>+ Meta</button></div>
           {s.metas.length ? s.metas.map((m) => { const sin = m.ultimoAvance ? dif(hoy, m.ultimoAvance) : null; return (
