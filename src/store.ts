@@ -5,6 +5,7 @@ import { dif, esISO, hoyISO, sumar } from './lib/fechas'
 
 const CLAVE = 'luzmila-v1'
 const CLAVE_FOTOS = 'luzmila-fotos'
+const CLAVE_TABLERO = 'luzmila-tablero'
 
 export const vacio = () => ({
   version: 1,
@@ -34,6 +35,8 @@ export const vacio = () => ({
   ancla: { nombre: '', inicio: '' },
   fasesReg: [] as any[],
   fasesChecks: {} as Record<string, boolean>,
+  animo: {} as Record<string, { humor: number; energia: number }>,
+  pausas: [] as any[],
   patrones: { fortalezas: [] as any[], debiles: [] as any[] },
   fasesAbiertas: [] as number[],
   fasesEstado: {} as Record<string, string>,
@@ -81,20 +84,23 @@ export const useDatos = create<Datos & Acciones>()(
         return { retomo }
       },
       importar: (json) => {
-        const { fotos, ...resto } = json || {}
+        const { fotos, tablero, ...resto } = json || {}
+        if (Array.isArray(tablero)) { try { localStorage.setItem(CLAVE_TABLERO, JSON.stringify(tablero)) } catch { /* sin espacio */ } }
         if (Array.isArray(fotos)) { try { localStorage.setItem(CLAVE_FOTOS, JSON.stringify(fotos)) } catch { /* sin espacio: seguimos sin fotos */ } }
         const base = vacio()
         const mezcla: any = { ...base, ...resto, cargado: true }
         for (const k of ['perfil', 'culta', 'zorro', 'voz', 'patrones', 'modulos', 'ajustes', 'agenda', 'ancla']) mezcla[k] = { ...(base as any)[k], ...(resto as any)[k] }
         set(mezcla)
       },
-      borrarTodo: () => { try { localStorage.removeItem(CLAVE_FOTOS) } catch { /* nada */ } set(vacio()) },
+      borrarTodo: () => { try { localStorage.removeItem(CLAVE_FOTOS); localStorage.removeItem(CLAVE_TABLERO) } catch { /* nada */ } set(vacio()) },
     }),
     { name: CLAVE, version: 1 },
   ),
 )
 
 export const FOTOS_PUBLICAS = [1, 2, 3, 4, 5].map((n) => `${import.meta.env.BASE_URL}fotos/f${n}.jpg`)
+export const leerTablero = (): any[] => { try { const t = JSON.parse(localStorage.getItem(CLAVE_TABLERO) || '[]'); return Array.isArray(t) ? t : [] } catch { return [] } }
+export const guardarTablero = (t: any[]) => { try { localStorage.setItem(CLAVE_TABLERO, JSON.stringify(t)); return true } catch { return false } }
 export const fotosGuardadas = (): string[] => {
   try { const propias = JSON.parse(localStorage.getItem(CLAVE_FOTOS) || '[]'); if (Array.isArray(propias) && propias.length) return propias } catch { /* sin fotos propias */ }
   return FOTOS_PUBLICAS
@@ -103,6 +109,7 @@ export const exportar = (s: Datos) => {
   const limpio: any = {}
   for (const k of Object.keys(vacio())) limpio[k] = (s as any)[k]
   limpio.fotos = fotosGuardadas()
+  limpio.tablero = leerTablero()
   return limpio
 }
 

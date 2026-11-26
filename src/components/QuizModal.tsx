@@ -46,7 +46,7 @@ export default function QuizModal() {
       {p && !fin && (
         <div className="pila">
           <div className="entre"><span className="eyebrow">{nucleo(tema)}</span><span className="chico suave">{i + 1} / {preguntas.length}</span></div>
-          <div className="barra"><span style={{ width: `${(i / preguntas.length) * 100}%`, display: 'block', height: '100%', background: 'var(--tinta)', borderRadius: 99, transition: 'width .4s' }} /></div>
+          <div className="barra"><span style={{ width: `${(i / preguntas.length) * 100}%`, display: 'block', height: '100%', background: 'var(--fuerte)', borderRadius: 99, transition: 'width .4s' }} /></div>
           <h3 className="h3" style={{ fontSize: 22, lineHeight: 1.25 }}>{p.q}</h3>
           <div className="pila-s">{p.opciones.map((o, n) => (
             <button key={o + n} className="opcion" disabled={resp !== null} data-estado={resp === null ? '' : n === p.correcta ? 'ok' : n === resp ? 'mal' : 'neutro'} onClick={() => elegir(n)}>{o}</button>

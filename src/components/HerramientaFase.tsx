@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { irA } from '../App'
 import { HERRAMIENTAS, type Campo, type Seccion } from '../data/herramientas'
+import { PLANES } from '../data/planes'
+import { Barra } from './ui'
 import { hoyISO } from '../lib/fechas'
 import { useDatos } from '../store'
 import { Campo as Field, decir } from './ui'
@@ -54,6 +56,42 @@ function Bloque({ fase, sec }: { fase: number; sec: Seccion }) {
   )
 }
 
+function PlanFase({ fase }: { fase: number }) {
+  const s = useDatos()
+  const p = PLANES[fase]
+  if (!p) return null
+  const hechos = p.pasos.filter((_, i) => s.fasesChecks[`${fase}:p${i}`]).length
+  const todo = hechos === p.pasos.length
+  const marcar = (i: number) => {
+    const k = `${fase}:p${i}`, v = !!s.fasesChecks[k]
+    s.poner('fasesChecks', { ...s.fasesChecks, [k]: !v })
+    if (!v) {
+      const falta = p.pasos.length - hechos - 1
+      if (falta === 0) { decir('¡Plan completo! 🎉', true); mascotaDice('¡Completaste todo el plan de esta fase! Con calma y a tu manera, lo lograste 🏆', 'fiesta') }
+      else { decir('Un paso más ✔', true); mascotaDice(`¡Un paso más! Faltan ${falta}. Sin apuro 🌱`, 'feliz') }
+    }
+  }
+  return (
+    <div className="pila">
+      <div className="card pila-s" style={{ padding: 16 }}>
+        <div className="entre"><span className="h3" style={{ fontSize: 17 }}>🪜 Plan paso a paso</span><span className="pill" style={{ background: todo ? 'var(--fuerte)' : undefined }}>{hechos}/{p.pasos.length}{todo ? ' ✔' : ''}</span></div>
+        <Barra v={hechos / p.pasos.length} mundo />
+        {p.pasos.map((t, i) => { const v = !!s.fasesChecks[`${fase}:p${i}`]; return <button key={i} className="item chico" aria-pressed={v} style={{ textAlign: 'left', background: v ? 'var(--menta)' : undefined }} onClick={() => marcar(i)}>{v ? '✔' : String(i + 1) + '.'} {t}</button> })}
+        <p className="porque">Mínima: {p.minima}</p>
+      </div>
+      <div className="dos">
+        <div className="item"><span className="eyebrow">🔬 Lo que dice la evidencia</span><span className="chico">{p.ciencia}</span></div>
+        {p.tradicion && <div className="item"><span className="eyebrow">🌿 Saber tradicional</span><span className="chico">{p.tradicion}</span></div>}
+      </div>
+      <div className="dos">
+        <div className="item blanco"><span className="eyebrow">📦 Entregables</span>{p.entregables.map((e) => <span key={e} className="chico">◦ {e}</span>)}</div>
+        <div className="item blanco"><span className="eyebrow">🎁 Cómo se celebra</span><span className="chico">{p.gana}</span>{p.chip && <span className="chico"><b>Chip:</b> “{p.chip}”</span>}</div>
+      </div>
+      {p.alerta && <p className="porque">{p.alerta}</p>}
+    </div>
+  )
+}
+
 export default function HerramientaFase({ fase }: { fase: number }) {
   const s = useDatos()
   const h = HERRAMIENTAS[fase]
@@ -62,6 +100,7 @@ export default function HerramientaFase({ fase }: { fase: number }) {
   return (
     <div className="pila">
       <p className="chico">{h.intro}</p>
+      <PlanFase fase={fase} />
       {h.aviso && <p className="porque">{h.aviso}</p>}
       {h.profesional && <p className="porque">Esta fase se trabaja mejor con acompañamiento profesional en paralelo. La plataforma te guarda el espacio, nunca lo reemplaza.</p>}
       {h.linea && <div><button className="btn" onClick={() => irA(h.linea!.ruta as any)}>{h.linea.texto} →</button></div>}

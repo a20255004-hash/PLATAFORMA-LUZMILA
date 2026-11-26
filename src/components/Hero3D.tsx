@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { letraDe } from '../data/letras'
 
-const C = { tinta: '#12302a', lima: '#4fd08f', hielo: '#f4fbf6', lila: '#c3adff', mandarina: '#ff9d57', celeste: '#86d6ff', rosa: '#ffb3d1', mostaza: '#ffd25e', menta: '#8fe5b8', crema: '#e6f6ec' }
+const C = { tinta: '#0b8f62', lima: '#4fd08f', hielo: '#f4fbf6', lila: '#c3adff', mandarina: '#ff9d57', celeste: '#86d6ff', rosa: '#ffb3d1', mostaza: '#ffd25e', menta: '#8fe5b8', crema: '#e6f6ec' }
 const mat = (color: string, extra: any = {}) => <meshStandardMaterial color={color} roughness={0.35} metalness={0.05} {...extra} />
 
 function Burbuja({ src, pos, r, color }: { src: string; pos: [number, number, number]; r: number; color: string }) {
@@ -62,7 +62,7 @@ function Escena({ fotos, nombre, letra }: { fotos: string[]; nombre: string; let
             <Text3D font={fuente} size={alto ? 1.5 : 2.3} height={0.55} bevelEnabled bevelSize={0.035} bevelThickness={0.05} bevelSegments={4} curveSegments={10} letterSpacing={0.02}>
               {nombre}
               <meshStandardMaterial attach="material-0" color={C.tinta} roughness={0.3} />
-              <meshStandardMaterial attach="material-1" color={C.hielo} roughness={0.5} />
+              <meshStandardMaterial attach="material-1" color="#8fe3bd" roughness={0.5} />
             </Text3D>
           </Center>
           </group>

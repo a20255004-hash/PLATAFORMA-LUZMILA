@@ -55,7 +55,7 @@ export default function Patrones() {
         <span className="eyebrow">Qué trabajar ahora · una sola cosa</span>
         <h2 className="display" style={{ fontSize: 'clamp(32px, 5.4vw, 62px)' }}>{sug.t}</h2>
         <p style={{ maxWidth: 700 }}>{sug.p}</p>
-        {sug.por && <p className="porque" style={{ borderColor: 'var(--lima)', color: 'rgba(251,247,240,.75)' }}>Por qué: {sug.por}</p>}
+        {sug.por && <p className="porque" style={{ borderColor: 'var(--lima)', color: 'var(--tinta-2)' }}>Por qué: {sug.por}</p>}
         <div><button className="btn claro" onClick={() => irA(sug.ir)}>Vamos →</button></div>
       </Tilt></Sube>
 

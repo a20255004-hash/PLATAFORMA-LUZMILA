@@ -262,7 +262,7 @@ export function tendencia(evs: any[]) {
 
 /* ───────── 7) Plan de hoy: qué conviene hacer, con su porqué ───────── */
 import { BLOQUES_CULTA } from '../data/estructura'
-import { bloqueCulta, hoyISO, queToca } from './fechas'
+import { bloqueCulta, hoyISO, queToca, sumar as sumarDias } from './fechas'
 import { enlacesTema, temaSugerido } from './recursos'
 import { proximasFechas, puntosDia, repasosPendientes, siguientePilar } from '../store'
 
@@ -273,6 +273,7 @@ export function planDeHoy(s: any): { pasos: Paso[]; tema?: ReturnType<typeof tem
   const reingreso = !!s.ajustes?.reingreso
   let tema: any
   if (puntosDia(s.checkins[hoy] || {}) === 0) pasos.push({ id: 'checkin', emoji: '✅', titulo: 'Check-in de 10 segundos', detalle: 'Marca lo que ya hiciste hoy. Con eso el día queda vivo.', por: 'Es lo que sostiene la racha de 48 h; todo lo demás es bonus.', ir: { tipo: 'ruta', ruta: 'hoy' } })
+  if ((s.animo || {})[hoy]?.energia === 1) { pasos.push({ id: 'baja', emoji: '🪫', titulo: 'Hoy toca la versión mínima', detalle: 'Energía baja: con el check-in basta. Si quieres algo extra, una pausa de respiración de 1 minuto.', por: 'Tu proyecto lo dice: con poca energía se baja la exigencia, no se abandona.', ir: { tipo: 'ruta', ruta: 'pausa' } }); return { pasos } }
   const pf = proximasFechas(s)[0]
   if (pf && pf.faltan >= 0 && pf.faltan <= 3) pasos.push({ id: 'fecha', emoji: '📌', titulo: `${pf.titulo} · ${pf.faltan === 0 ? 'es hoy' : pf.faltan === 1 ? 'mañana' : `en ${pf.faltan} días`}`, detalle: pf.nota ? `Primer paso: ${pf.nota}` : 'Un paso pequeño hoy, aunque sean 10 minutos.', por: 'Tu mejor talento es cumplir cuando hay fecha: aquí la fecha manda.', ir: { tipo: 'ruta', ruta: 'agenda' } })
   if (reingreso) return { pasos: pasos.length ? pasos : [{ id: 'respira', emoji: '🌱', titulo: 'Hoy basta con lo mínimo', detalle: 'Estás en Reingreso: lo extra es opcional.', por: 'Protocolo de tu propio proyecto.', ir: { tipo: 'ruta', ruta: 'calendario' } }] }
@@ -290,6 +291,8 @@ export function planDeHoy(s: any): { pasos: Paso[]; tema?: ReturnType<typeof tem
   if (sinGar) pasos.push({ id: 'garantia', emoji: '⚖️', titulo: 'Completa la garantía de un argumento', detalle: `${sinGar} argumento(s) sin el “porque” que une evidencia y afirmación.`, por: 'La garantía es la pieza que más cuesta (Toulmin).', ir: { tipo: 'coach', modo: 'argumentar' } })
   const evs = s.evaluaciones || []
   if (evs.length >= 2 && tendencia(evs).delta < -3) pasos.push({ id: 'tendencia', emoji: '📉', titulo: 'Una evaluación tranquila para retomar', detalle: 'Tus últimas evaluaciones bajaron un poco: escribe 5 líneas sobre algo que ya sepas.', por: tendencia(evs).texto, ir: { tipo: 'coach', modo: 'libre' } })
+  const habloReciente = (s.evaluaciones || []).some((x: any) => String(x.tema || '').startsWith('🎙️') && x.fecha >= sumarDias(hoy, -3))
+  if (!habloReciente && pasos.length < 3) pasos.push({ id: 'habla', emoji: '🎙️', titulo: 'Habla 60 segundos en voz alta', detalle: 'Tu reto está en la voz: un reto corto, y miras tus muletillas.', por: 'Practicar hablando entrena lo que más quieres mejorar; escribir ayuda, pero no es lo mismo.', ir: { tipo: 'ruta', ruta: 'habla' } })
   return { pasos: pasos.slice(0, 3), tema }
 }
 

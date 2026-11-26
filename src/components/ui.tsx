@@ -56,7 +56,7 @@ export function Titulo3D({ texto, chico = false, nombre = false }: { texto: stri
   )
 }
 
-export function Anillo({ valor, tam = 150, grosor = 14, color = 'var(--tinta)', children }: { valor: number; tam?: number; grosor?: number; color?: string; children?: ReactNode }) {
+export function Anillo({ valor, tam = 150, grosor = 14, color = 'var(--titulo)', children }: { valor: number; tam?: number; grosor?: number; color?: string; children?: ReactNode }) {
   const r = (tam - grosor) / 2
   const c = 2 * Math.PI * r
   const [v, setV] = useState(0)

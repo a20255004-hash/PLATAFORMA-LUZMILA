@@ -14,6 +14,10 @@ const PAGINAS: Record<MundoId, any> = {
   hoy: Hoy,
   agenda: lazy(() => import('./pages/Agenda')),
   coach: lazy(() => import('./pages/Coach')),
+  habla: lazy(() => import('./pages/Habla')),
+  camino: lazy(() => import('./pages/Camino')),
+  pausa: lazy(() => import('./pages/Pausa')),
+  tablero: lazy(() => import('./pages/Tablero')),
   puente: lazy(() => import('./pages/Puente')),
   retos: lazy(() => import('./pages/Retos')),
   mapa: lazy(() => import('./pages/Mapa')),
@@ -62,6 +66,7 @@ export default function App() {
     window.addEventListener('pointermove', m, { passive: true }); return () => window.removeEventListener('pointermove', m)
   }, [])
 
+  useEffect(() => { if (!menu) return; const k = (e: KeyboardEvent) => e.key === 'Escape' && setMenu(false); window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k) }, [menu])
   useEffect(() => { const h = () => setRuta(leerRuta()); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h) }, [])
   useEffect(() => { document.documentElement.style.setProperty('--mundo', MUNDOS[ruta].color); window.scrollTo({ top: 0 }) }, [ruta])
   useEffect(() => { const p = (e: PointerEvent) => { origen.current = { x: e.clientX, y: e.clientY } }; window.addEventListener('pointerdown', p, true); return () => window.removeEventListener('pointerdown', p, true) }, [])

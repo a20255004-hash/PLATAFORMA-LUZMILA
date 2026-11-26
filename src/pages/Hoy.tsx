@@ -98,13 +98,13 @@ export default function Hoy() {
 
       {s.cargado && s.ajustes.reingreso && (
         <Sube className="card tinta pila" style={{ marginTop: 18 }}>
-          <div className="fila"><span className="pill" style={{ background: 'var(--lima)', color: 'var(--tinta)' }}>🚪 Modo Reingreso</span><span className="chico suave">semana 1</span></div>
+          <div className="fila"><span className="pill" style={{ background: 'var(--lima)' }}>🚪 Modo Reingreso</span><span className="chico suave">semana 1</span></div>
           <h2 className="display" style={{ fontSize: 'clamp(34px, 6vw, 68px)' }}>Volviste. Eso ya cuenta.</h2>
-          <p style={{ maxWidth: 680 }}>No se empieza de cero ni se suma todo de golpe. Tus <b style={{ color: 'var(--lima)' }}>{xp.total} XP</b> siguen aquí: los puntos nunca se restan. Esta semana solo va la <b>Fase 1 en versión simple</b>; lo demás espera sin culpa.</p>
+          <p style={{ maxWidth: 680 }}>No se empieza de cero ni se suma todo de golpe. Tus <b style={{ color: 'var(--titulo)' }}>{xp.total} XP</b> siguen aquí: los puntos nunca se restan. Esta semana solo va la <b>Fase 1 en versión simple</b>; lo demás espera sin culpa.</p>
           <div className="fila">
-            {['📵 Celular fuera del cuarto', '🍽️ Una comida ancla', '🌅 Una acción de mañana', '⏱️ Check-in de 10 segundos'].map((t) => <span key={t} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: 'var(--crema)' }}>{t}</span>)}
+            {['📵 Celular fuera del cuarto', '🍽️ Una comida ancla', '🌅 Una acción de mañana', '⏱️ Check-in de 10 segundos'].map((t) => <span key={t} className="pill" style={{ background: 'rgba(255,255,255,.9)' }}>{t}</span>)}
           </div>
-          <p className="porque" style={{ borderColor: 'var(--lima)', color: 'rgba(251,247,240,.75)' }}>¿Por qué tan poquito? Tu propio protocolo: tras semanas sin tocar, se retoman 1–2 fases durante una semana. Querer sumar todo a la vez es justo lo que lo hizo caer.</p>
+          <p className="porque" style={{ borderColor: 'var(--lima)', color: 'var(--tinta-2)' }}>¿Por qué tan poquito? Tu propio protocolo: tras semanas sin tocar, se retoman 1–2 fases durante una semana. Querer sumar todo a la vez es justo lo que lo hizo caer.</p>
           <div><button className="btn claro s" onClick={() => { s.poner('ajustes.reingreso', false); decir('Modo Reingreso cerrado. Vamos con calma 🌱') }}>Ya pasé mi semana 1 → ver todo</button></div>
         </Sube>
       )}

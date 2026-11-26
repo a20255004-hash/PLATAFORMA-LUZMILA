@@ -8,6 +8,10 @@ export const MUNDOS = {
   coach: { id: 'coach', nombre: 'Coach', emoji: '🧠', color: 'var(--lila)', frase: 'Escribe y te evalúo' },
   agenda: { id: 'agenda', nombre: 'Agenda', emoji: '⏰', color: 'var(--mostaza)', frase: 'Recordatorios y fechas límite' },
   puente: { id: 'puente', nombre: 'Claude', emoji: '🌉', color: 'var(--celeste)', frase: 'Puente con tu chat de Claude' },
+  habla: { id: 'habla', nombre: 'Habla', emoji: '🎙️', color: 'var(--rosa)', frase: 'Practica hablando, no solo escribiendo' },
+  camino: { id: 'camino', nombre: 'Camino', emoji: '🛤️', color: 'var(--lima)', frase: 'Tu ruta, con cada paso' },
+  pausa: { id: 'pausa', nombre: 'Pausa', emoji: '🫁', color: 'var(--celeste)', frase: 'Respira y cuéntame cómo estás' },
+  tablero: { id: 'tablero', nombre: 'Tablero', emoji: '🖼️', color: 'var(--durazno)', frase: 'Lo que quieres ser, a la vista' },
   retos: { id: 'retos', nombre: 'Retos', emoji: '🎮', color: 'var(--mostaza)', frase: 'Aquí se juega de verdad' },
   mapa: { id: 'mapa', nombre: 'Mapa', emoji: '🗺️', color: 'var(--mostaza)', frase: '19 fases, camino con desvíos' },
   culta: { id: 'culta', nombre: 'Culta', emoji: '🎓', color: 'var(--lila)', frase: 'Culta y alturada' },
@@ -21,7 +25,7 @@ export const MUNDOS = {
   ajustes: { id: 'ajustes', nombre: 'Datos', emoji: '⚙️', color: 'var(--crema-2)', frase: 'Guardar, importar, módulos' },
 } as const
 export type MundoId = keyof typeof MUNDOS
-export const ORDEN: MundoId[] = ['hoy', 'agenda', 'coach', 'puente', 'retos', 'mapa', 'culta', 'zorro', 'voz', 'calendario', 'bitacora', 'expediente', 'patrones', 'logros', 'ajustes']
+export const ORDEN: MundoId[] = ['hoy', 'agenda', 'coach', 'habla', 'puente', 'retos', 'camino', 'mapa', 'culta', 'zorro', 'voz', 'pausa', 'calendario', 'bitacora', 'tablero', 'expediente', 'patrones', 'logros', 'ajustes']
 
 export const NIVELES = [
   { min: 0, emoji: '🐛', nombre: 'Larva Cansada', frase: 'Todo inicio cuenta, aunque no lo sientas todavía.' },
