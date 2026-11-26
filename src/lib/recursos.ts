@@ -16,14 +16,16 @@ export function enlacesTema(tema: string, bloque: 'B1' | 'B2' | 'B3' = 'B1'): En
   const wiki: Enlace = { etiqueta: 'Panorama (Wikipedia)', emoji: '📖', url: `https://es.wikipedia.org/wiki/Special:Search?search=${q}&go=Ir`, para: 'Para entender el mapa general en 5 minutos' }
   const video: Enlace = { etiqueta: 'Explicación en video', emoji: '🎬', url: `https://www.youtube.com/results?search_query=${encodeURIComponent(base + ' explicación clara')}`, para: 'Para verlo explicado con ejemplos' }
   const academico: Enlace = { etiqueta: 'Fuente académica', emoji: '🎓', url: `https://scholar.google.com/scholar?hl=es&q=${qx}`, para: 'Para profundizar y tener algo citable en APA' }
+  const sitio = (sitios: string[], etiqueta: string, emoji: string, para: string): Enlace => ({ etiqueta, emoji, url: `https://www.google.com/search?q=${encodeURIComponent(sitios.map((x) => 'site:' + x).join(' OR ') + ' ' + base)}`, para })
+  const redalyc = sitio(['redalyc.org', 'scielo.org', 'dialnet.unirioja.es'], 'Artículos en español (Redalyc, SciELO, Dialnet)', '🔬', 'Revistas académicas en español, de acceso abierto')
   const libros: Enlace = { etiqueta: 'Libros sobre el tema', emoji: '📚', url: `https://www.google.com/search?tbm=bks&hl=es&q=${qx}`, para: 'Para ver qué autores lo trabajan' }
   if (bloque === 'B3') return [
     { etiqueta: 'Diccionario (RAE)', emoji: '📕', url: `https://dle.rae.es/${encodeURIComponent(base.split(' ')[0].toLowerCase())}`, para: 'Para precisar significados' },
     { etiqueta: 'Dudas de español (Fundéu)', emoji: '✍️', url: `https://www.fundeu.es/?s=${q}`, para: 'Para escribir con precisión' },
     wiki, video,
   ]
-  if (bloque === 'B2') return [wiki, { etiqueta: 'Britannica', emoji: '🌍', url: `https://www.britannica.com/search?query=${q}`, para: 'Enciclopedia con revisión editorial' }, video, academico]
-  return [wiki, video, academico, libros]
+  if (bloque === 'B2') return [sitio(['es.khanacademy.org'], 'Khan Academy', '🧑‍🏫', 'Lecciones gratuitas en español'), wiki, { etiqueta: 'Britannica', emoji: '🌍', url: `https://www.britannica.com/search?query=${q}`, para: 'Enciclopedia con revisión editorial' }, video, academico, redalyc]
+  return [sitio(['economipedia.com'], 'Economipedia', '💡', 'Definiciones claras de economía, finanzas y gestión'), sitio(['gestiopolis.com'], 'Gestiopolis', '🏢', 'Artículos de gestión y administración'), wiki, video, academico, redalyc, libros]
 }
 
 /** Plan corto para estudiar un tema sin saturarse. */
@@ -99,7 +101,8 @@ export function enlacesFicha(tema: string, bloque: 'B1' | 'B2' | 'B3' = 'B1'): E
   })
   const resto = enlacesTema(tema, bloque).filter((e) => !e.etiqueta.startsWith('Panorama') && !e.etiqueta.startsWith('Diccionario') && !e.etiqueta.startsWith('Dudas') && !e.etiqueta.startsWith('Britannica'))
   const libro: Enlace[] = f.lectura ? [{ etiqueta: f.lectura, emoji: '📚', url: `https://www.google.com/search?tbm=bks&hl=es&q=${encodeURIComponent(f.lectura)}`, para: 'Lectura sugerida' }] : []
-  return [...fuente, ...libro, ...resto.filter((e) => !e.etiqueta.startsWith('Libros sobre'))]
+  const esWiki = (e: Enlace) => e.etiqueta.startsWith('Wikipedia')
+  return [...fuente.filter((e) => !esWiki(e)), ...resto.filter((e) => !e.etiqueta.startsWith('Libros sobre') && !e.etiqueta.startsWith('Artículos')), ...fuente.filter(esWiki), ...resto.filter((e) => e.etiqueta.startsWith('Artículos')), ...libro]
 }
 export const linkWikipedia = (tema: string) => { const f = fichaDe(tema); const w = f?.wikis.find((x) => !x.startsWith('@')); return w ? w.replaceAll('_', ' ') : null }
 
